@@ -8,9 +8,9 @@ Connection &Connection::createInstance()
 
 bool Connection::createConnection()
 {
-    db.setDatabaseName("Projet_2A"); //remplacer avec votre nom du projet
+    db.setDatabaseName("XE"); //remplacer avec votre nom du projet
     db.setUserName("amine"); //remplacer avec votre nom d'utilisateur
-    db.setHostName("192.168.1.111"); //remplacer avec localhost ou 127.0.0.1
+    //db.setHostName("192.168.1.111"); //remplacer avec localhost ou 127.0.0.1
     db.setPassword("admin"); //remplacer avec votre mdp
     if (db.open()){
         qDebug() << "Connection established !";
@@ -22,7 +22,7 @@ bool Connection::createConnection()
 }
 
 Connection::Connection() {
-    db = QSqlDatabase::addDatabase("QODBC");
+    db = QSqlDatabase::addDatabase("QOCI");
 }
 
 Connection::~Connection()
