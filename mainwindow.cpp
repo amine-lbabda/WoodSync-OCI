@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -21,6 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    if (cap.isOpened()){
+        cap.release();
+        destroyWindow("Test");
+    }
+
 }
 
 void MainWindow::on_GestionStock_clicked()
@@ -75,3 +79,53 @@ void MainWindow::on_BtnLogin_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
 }
+
+void MainWindow::on_BtnLoginFace_clicked()
+{
+    cap.open(0);
+    model = face::LBPHFaceRecognizer::create();
+    try {
+        model->read("/home/amine/Desktop/WoodSync-OCI/woodsync_model.yml");
+    } catch (...) {
+        qDebug() << ".yml file not loaded !";
+    }
+    if (!faceCascade.load("/home/amine/Desktop/WoodSync-OCI/haarcascade_frontalface_default.xml")) {
+        qDebug() << "Fichier pas loaded !";
+        return;
+    }
+    while (true){
+        cap.read(frame);
+        if (frame.empty()){
+            break;
+        }
+        cvtColor(frame,output,COLOR_BGR2GRAY);
+        equalizeHist(output,output);
+        faceCascade.detectMultiScale(output,faces);
+        for (vector<Rect>::iterator it=faces.begin();it != faces.end();++it){
+            Rect faceRect = *it;
+            Mat faceROI = output(faceRect);
+            cv::resize(faceROI,faceROI,Size(200,200));
+            int label = -1;
+            double confidence = 0.0;
+            model->predict(faceROI,label,confidence);
+            Scalar color;
+            if (confidence < 70.0 && label != -1){
+                color = Scalar(0,255,0);
+                putText(frame,"ID:1",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+            } else {
+                color = Scalar(0,0,255);
+                putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+            }
+            rectangle(frame,faceRect,color,2);
+
+        }
+        imshow(Title,frame);
+        int key = waitKey(30);
+        if (key == 27 || !getWindowProperty(Title,WND_PROP_VISIBLE)) {
+            break;
+        }
+    }
+    cap.release();
+    destroyWindow(Title);
+}
+

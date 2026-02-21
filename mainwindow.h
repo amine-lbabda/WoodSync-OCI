@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <opencv2/opencv.hpp>
+#include <opencv2/face.hpp>
+#include <vector>
+using namespace std;
+using namespace cv;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,7 +41,16 @@ private slots:
 
     void on_BtnLogin_clicked();
 
+    void on_BtnLoginFace_clicked();
+
 private:
     Ui::MainWindow *ui;
+    VideoCapture cap;
+    Mat frame,output;
+    const String Title="Reconnaissance faciale";
+    vector<Rect> faces;
+    Ptr<face::LBPHFaceRecognizer> model;
+    CascadeClassifier faceCascade;
+
 };
 #endif // MAINWINDOW_H

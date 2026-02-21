@@ -27,3 +27,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     ressources.qrc
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += opencv4
+
+DISTFILES += \
+    haarcascade_frontalface_default.xml \
+    haarcascade_profileface.xml \
+    woodsync_model.yml
