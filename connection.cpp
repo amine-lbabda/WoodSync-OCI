@@ -1,5 +1,6 @@
 #include "connection.h"
-
+#include "dotenv.h"
+using namespace std;
 Connection &Connection::createInstance()
 {
     static Connection instance;
@@ -8,7 +9,12 @@ Connection &Connection::createInstance()
 
 bool Connection::createConnection()
 {
-    db.setDatabaseName("XE"); //remplacer avec votre nom du projet
+    dotenv::init("/home/amine/Desktop/WoodSync-OCI/.env");
+    QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
+    QString username = QString::fromUtf8(dotenv::getenv("DATABASE_USERNAME"));
+    QString hostname = QString::fromUtf8(dotenv::getenv("DATABSE_HOST"));
+    QString password = QString::fromUtf8(dotenv::getenv("DATABASE_PASSWORD"));
+    db.setDatabaseName(name); //remplacer avec votre nom du projet
     db.setUserName("amine"); //remplacer avec votre nom d'utilisateur
     db.setHostName("localhost"); //remplacer avec localhost ou 127.0.0.1
     db.setPassword("admin"); //remplacer avec votre mdp

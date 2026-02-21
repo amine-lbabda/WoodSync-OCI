@@ -15,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     connection.h \
+    dotenv.h \
     mainwindow.h
 
 FORMS += \
@@ -32,6 +33,7 @@ unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
 DISTFILES += \
+    .env \
     haarcascade_frontalface_default.xml \
     haarcascade_profileface.xml \
     woodsync_model.yml

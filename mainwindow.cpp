@@ -83,6 +83,7 @@ void MainWindow::on_BtnLogin_clicked()
 void MainWindow::on_BtnLoginFace_clicked()
 {
     cap.open(0);
+    bool isAuthentificated = false;
     model = face::LBPHFaceRecognizer::create();
     try {
         model->read("/home/amine/Desktop/WoodSync-OCI/woodsync_model.yml");
@@ -93,7 +94,7 @@ void MainWindow::on_BtnLoginFace_clicked()
         qDebug() << "Fichier pas loaded !";
         return;
     }
-    while (true){
+    while (!isAuthentificated){
         cap.read(frame);
         if (frame.empty()){
             break;
@@ -109,23 +110,25 @@ void MainWindow::on_BtnLoginFace_clicked()
             double confidence = 0.0;
             model->predict(faceROI,label,confidence);
             Scalar color;
-            if (confidence < 70.0 && label != -1){
+            if (confidence > 70.0 && label != -1){
                 color = Scalar(0,255,0);
                 putText(frame,"ID:1",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                isAuthentificated =true;
             } else {
                 color = Scalar(0,0,255);
                 putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                isAuthentificated = false;
             }
             rectangle(frame,faceRect,color,2);
 
         }
         imshow(Title,frame);
-        int key = waitKey(30);
-        if (key == 27 || !getWindowProperty(Title,WND_PROP_VISIBLE)) {
-            break;
-        }
+        waitKey(60);
     }
     cap.release();
     destroyWindow(Title);
+    if (isAuthentificated) {
+        ui->stackedWidget->setCurrentIndex(2);
+    }
 }
 
