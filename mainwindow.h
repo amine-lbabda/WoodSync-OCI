@@ -44,7 +44,7 @@ private slots:
 
     void on_BtnLoginFace_clicked();
 
-    void handleFrame(Mat frame);
+    void handleFrame(cv::Mat frame);
 
 private:
     Ui::MainWindow *ui;

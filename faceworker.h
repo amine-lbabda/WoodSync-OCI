@@ -12,7 +12,7 @@ class FaceWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit FaceWorker(QObject *parent = nullptr);
+    FaceWorker(QObject *parent = nullptr);
     ~FaceWorker();
 public slots:
     void process();
@@ -20,7 +20,7 @@ public slots:
 
 signals:
     void faceRecognized(int userId);
-    void frameReady(const Mat& frame);
+    void frameReady(const cv::Mat& frame);
     void finished();
     void error(bool isError);
 private:

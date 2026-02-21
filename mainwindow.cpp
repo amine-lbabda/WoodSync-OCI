@@ -95,7 +95,6 @@ void MainWindow::on_BtnLoginFace_clicked()
         thread->quit();
 
     });
-    connect(thread,&QThread::started,worker,&FaceWorker::process);
     connect(worker,&FaceWorker::error,this,[this](bool isError){
         if (isError == true){
             msgBox.setCursor(Qt::PointingHandCursor);
@@ -106,6 +105,9 @@ void MainWindow::on_BtnLoginFace_clicked()
         }
 
     });
+    connect(thread,&QThread::finished,worker,&QObject::deleteLater);
+    connect(thread,&QThread::finished,thread,&QObject::deleteLater);
+    connect(thread,&QThread::started,worker,&FaceWorker::process);
     thread->start();
 
 }
