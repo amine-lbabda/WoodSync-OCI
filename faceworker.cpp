@@ -20,13 +20,18 @@ void FaceWorker::stop(){
 
 void FaceWorker::process(){
     bool isFound = false;
+    bool isError = false;
     model = face::LBPHFaceRecognizer::create();
     try {
         model->read("/home/amine/Desktop/WoodSync-OCI/woodsync_model.yml");
     } catch (...) {
+        isError = true;
+        emit error(isError);
         return;
     }
     if (!faceCascade.load("/home/amine/Desktop/WoodSync-OCI/haarcascade_frontalface_default.xml")) {
+        isError = true;
+        emit error(isError);
         return;
     } else {
         Mat frame,output;
@@ -65,11 +70,10 @@ void FaceWorker::process(){
                 emit faceRecognized(label);
                 if (cap.isOpened()) {
                     cap.release();
-                    destroyAllWindows();
                 }
                 break;
             }
-            emit finished();
         }
+        emit finished();
     }
 }

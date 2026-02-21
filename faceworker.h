@@ -22,6 +22,7 @@ signals:
     void faceRecognized(int userId);
     void frameReady(const Mat& frame);
     void finished();
+    void error(bool isError);
 private:
     bool m_abort;
     QMutex mutex;

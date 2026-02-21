@@ -90,12 +90,22 @@ void MainWindow::on_BtnLoginFace_clicked()
     connect(worker,&FaceWorker::faceRecognized,this,[this,worker,thread](){
         ui->stackedWidget->setCurrentIndex(2);
         ui->GestionEmployes->setChecked(true);
+        destroyAllWindows();
         worker->stop();
         thread->quit();
 
     });
     connect(thread,&QThread::started,worker,&FaceWorker::process);
+    connect(worker,&FaceWorker::error,this,[this](bool isError){
+        if (isError == true){
+            msgBox.setCursor(Qt::PointingHandCursor);
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.setWindowTitle(QObject::tr("Erreur"));
+            msgBox.setText(QObject::tr("Erreur inconnue ! "));
+            msgBox.exec();
+        }
 
+    });
     thread->start();
 
 }
