@@ -17,12 +17,12 @@ int main(int argc, char *argv[])
         msgBox.setWindowTitle(QObject::tr("Succés"));
         msgBox.setText(QObject::tr("Connection établie avec succées !"));
         msgBox.exec();
+        return a.exec();
     } else {
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setWindowTitle(QObject::tr("Erreur"));
         msgBox.setText(QObject::tr("Échec de la connection !"));
         msgBox.exec();
     }
-
-    return a.exec();
+    return -1;
 }
