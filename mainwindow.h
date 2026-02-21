@@ -44,6 +44,8 @@ private slots:
 
     void on_BtnLoginFace_clicked();
 
+    void handleFrame(Mat frame);
+
 private:
     Ui::MainWindow *ui;
     VideoCapture cap;

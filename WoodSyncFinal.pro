@@ -10,12 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     connection.cpp \
+    faceworker.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     connection.h \
     dotenv.h \
+    faceworker.h \
     mainwindow.h
 
 FORMS += \

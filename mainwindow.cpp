@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "faceworker.h"
+#include <QThread>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -13,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     for (QList<QPushButton*>::Iterator it=allButtons.begin();it != allButtons.end();++it) {
         (*it)->setCursor(Qt::PointingHandCursor);
     }
+    qRegisterMetaType<Mat>("Mat");
 }
 
 MainWindow::~MainWindow()
@@ -80,65 +83,28 @@ void MainWindow::on_BtnLogin_clicked()
 
 void MainWindow::on_BtnLoginFace_clicked()
 {
-    bool isAuthentificated = false;
-    model = face::LBPHFaceRecognizer::create();
-    try {
-        model->read("/home/amine/Desktop/WoodSync-OCI/woodsync_model.yml");
-    } catch (...) {
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setWindowTitle(QObject::tr("Erreur"));
-        msgBox.setText(QObject::tr("Échec de la connection !"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-        return;
-    }
-    if (!faceCascade.load("/home/amine/Desktop/WoodSync-OCI/haarcascade_frontalface_default.xml")) {
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setWindowTitle(QObject::tr("Erreur"));
-        msgBox.setText(QObject::tr("Échec de la connection !"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-        return;
-    } else {
-        cap.open(0);
-        while (!isAuthentificated){
-            cap.read(frame);
-            if (frame.empty()){
-                break;
-            }
-            cvtColor(frame,output,COLOR_BGR2GRAY);
-            equalizeHist(output,output);
-            faceCascade.detectMultiScale(output,faces);
-            for (vector<Rect>::iterator it=faces.begin();it != faces.end();++it){
-                Rect faceRect = *it;
-                Mat faceROI = output(faceRect);
-                cv::resize(faceROI,faceROI,Size(200,200));
-                int label = -1;
-                double confidence = 0.0;
-                model->predict(faceROI,label,confidence);
-                Scalar color;
-                if (confidence > 70.0 && label != -1){
-                    color = Scalar(0,255,0);
-                    putText(frame,"ID:1",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                    isAuthentificated =true;
-                } else {
-                    color = Scalar(0,0,255);
-                    putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                    isAuthentificated = false;
-                }
-                rectangle(frame,faceRect,color,2);
+    QThread* thread = new QThread();
+    FaceWorker* worker = new FaceWorker();
+    worker->moveToThread(thread);
+    connect(worker,&FaceWorker::frameReady,this,&MainWindow::handleFrame);
+    connect(worker,&FaceWorker::faceRecognized,this,[this,worker,thread](){
+        ui->stackedWidget->setCurrentIndex(2);
+        ui->GestionEmployes->setChecked(true);
+        worker->stop();
+        thread->quit();
 
-            }
-            imshow(Title,frame);
-            waitKey(60);
-        }
-        cap.release();
-        destroyWindow(Title);
-        if (isAuthentificated) {
-            ui->stackedWidget->setCurrentIndex(2);
-            ui->GestionEmployes->setChecked(true);
-        }
-    }
+    });
+    connect(thread,&QThread::started,worker,&FaceWorker::process);
+
+    thread->start();
 
 }
+
+void MainWindow::handleFrame(Mat frame)
+{
+    if (frame.empty()) return;
+    cv::imshow(Title,frame);
+    waitKey(1);
+}
+
 
