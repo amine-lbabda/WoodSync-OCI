@@ -7,6 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
+    ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->GestionStock->setCursor(Qt::PointingHandCursor);
+    ui->GestionCommandes->setCursor(Qt::PointingHandCursor);
+    ui->GestionEmployes->setCursor(Qt::PointingHandCursor);
+    ui->GestionReclamations->setCursor(Qt::PointingHandCursor);
+    ui->GestionProduits->setCursor(Qt::PointingHandCursor);
+    ui->GestionMateriels->setCursor(Qt::PointingHandCursor);
 }
 
 MainWindow::~MainWindow()
@@ -66,4 +75,3 @@ void MainWindow::on_BtnLogin_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
 }
-

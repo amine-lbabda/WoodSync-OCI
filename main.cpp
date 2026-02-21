@@ -8,11 +8,20 @@ int main(int argc, char *argv[])
     MainWindow w;
     Connection &c = Connection::createInstance();
     bool test = c.createConnection();
+    QMessageBox msgBox;
+    msgBox.setCursor(Qt::PointingHandCursor);
+    msgBox.setStandardButtons(QMessageBox::Ok);
     if (test){
         w.show();
-        QMessageBox::information(nullptr,QObject::tr("Succés"),QObject::tr("Connection établie avec succées !"),QMessageBox::Cancel);
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setWindowTitle(QObject::tr("Succés"));
+        msgBox.setText(QObject::tr("Connection établie avec succées !"));
+        msgBox.exec();
     } else {
-        QMessageBox::critical(nullptr,QObject::tr("Erreur"),QObject::tr("Échec de la connection !"),QMessageBox::Cancel);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setWindowTitle(QObject::tr("Erreur"));
+        msgBox.setText(QObject::tr("Échec de la connection !"));
+        msgBox.exec();
     }
 
     return a.exec();
