@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/face.hpp>
 #include <vector>
+#include <QMessageBox>
 using namespace std;
 using namespace cv;
 
@@ -51,6 +52,7 @@ private:
     vector<Rect> faces;
     Ptr<face::LBPHFaceRecognizer> model;
     CascadeClassifier faceCascade;
+    QMessageBox msgBox;
 
 };
 #endif // MAINWINDOW_H

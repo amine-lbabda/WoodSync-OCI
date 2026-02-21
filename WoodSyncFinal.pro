@@ -34,6 +34,8 @@ unix: PKGCONFIG += opencv4
 
 DISTFILES += \
     .env \
+    .env.example \
+    README.md \
     haarcascade_frontalface_default.xml \
     haarcascade_profileface.xml \
     woodsync_model.yml
