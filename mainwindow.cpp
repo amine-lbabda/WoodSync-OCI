@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->GestionReclamations->setCursor(Qt::PointingHandCursor);
     ui->GestionProduits->setCursor(Qt::PointingHandCursor);
     ui->GestionMateriels->setCursor(Qt::PointingHandCursor);
+    ui->BtnLoginFace->setCursor(Qt::PointingHandCursor);
 }
 
 MainWindow::~MainWindow()
@@ -138,6 +139,7 @@ void MainWindow::on_BtnLoginFace_clicked()
         destroyWindow(Title);
         if (isAuthentificated) {
             ui->stackedWidget->setCurrentIndex(2);
+            ui->GestionEmployes->setChecked(true);
         }
     }
 
