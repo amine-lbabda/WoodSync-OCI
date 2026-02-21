@@ -9,13 +9,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->GestionStock->setCursor(Qt::PointingHandCursor);
-    ui->GestionCommandes->setCursor(Qt::PointingHandCursor);
-    ui->GestionEmployes->setCursor(Qt::PointingHandCursor);
-    ui->GestionReclamations->setCursor(Qt::PointingHandCursor);
-    ui->GestionProduits->setCursor(Qt::PointingHandCursor);
-    ui->GestionMateriels->setCursor(Qt::PointingHandCursor);
-    ui->BtnLoginFace->setCursor(Qt::PointingHandCursor);
+    QList<QPushButton*> allButtons = this->findChildren<QPushButton*>();
+    for (QList<QPushButton*>::Iterator it=allButtons.begin();it != allButtons.end();++it) {
+        (*it)->setCursor(Qt::PointingHandCursor);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -23,7 +20,7 @@ MainWindow::~MainWindow()
     delete ui;
     if (cap.isOpened()){
         cap.release();
-        destroyWindow("Test");
+        destroyWindow(Title);
     }
 
 }
