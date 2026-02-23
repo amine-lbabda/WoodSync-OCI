@@ -55,25 +55,25 @@ void FaceWorker::process(){
 
                 model->predict(faceROI,label,confidence);
                 Scalar color(0,255,0);
-                //if (confidence < 85.0 && label >=0){
-                    //color = Scalar(0,255,0);
-                    //string final = "ID: " + to_string(label);
-                    //putText(frame,final,Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                    //isFound = true;
-                //} else {
-                    //color = Scalar(0,0,255);
-                    //putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                //}
+                if (confidence < 85.0 && label >=0){
+                    color = Scalar(0,255,0);
+                    string final = "ID: " + to_string(label);
+                    putText(frame,final,Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                    isFound = true;
+                } else {
+                    color = Scalar(0,0,255);
+                    putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                }
                 //debugging part
-                rectangle(frame,faceRect,color,2);
+                /*rectangle(frame,faceRect,color,2);
                 string final = "ID: " + to_string(label) + " Conf: " + to_string(confidence);
                 putText(frame,final,Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                rectangle(frame,faceRect,color,2);
+                rectangle(frame,faceRect,color,2);*/
 
 
             }
             emit frameReady(frame.clone());
-            QThread::msleep(30);
+            QThread::msleep(60);
             if (isFound) {
                 emit faceRecognized(label);
                 break;
