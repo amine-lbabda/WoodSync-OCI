@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     for (QList<QPushButton*>::Iterator it=allButtons.begin();it != allButtons.end();++it) {
         (*it)->setCursor(Qt::PointingHandCursor);
     }
-    qRegisterMetaType<Mat>("Mat");
 }
 
 MainWindow::~MainWindow()
@@ -97,17 +96,18 @@ void MainWindow::on_BtnLoginFace_clicked()
     });
     connect(worker,&FaceWorker::error,this,[this](bool isError){
         if (isError == true){
-            msgBox.setCursor(Qt::PointingHandCursor);
-            msgBox.setIcon(QMessageBox::Critical);
-            msgBox.setWindowTitle(QObject::tr("Erreur"));
-            msgBox.setText(QObject::tr("Erreur inconnue ! "));
-            msgBox.exec();
+            QMessageBox msg(QMessageBox::Critical,
+                            tr("Erreur"),
+                            tr("Erreur inconnue !"),
+                            QMessageBox::Ok,
+                            this);
+            msg.setCursor(Qt::PointingHandCursor);
+            msg.exec();
         }
 
     });
-    connect(thread,&QThread::finished,worker,&QObject::deleteLater);
-    connect(thread,&QThread::finished,thread,&QObject::deleteLater);
     connect(thread,&QThread::started,worker,&FaceWorker::process);
+    connect(thread,&QThread::finished,thread,&QObject::deleteLater);
     thread->start();
 
 }

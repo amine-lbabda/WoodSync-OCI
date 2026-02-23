@@ -1,4 +1,5 @@
 #include "faceworker.h"
+#include "qthread.h"
 
 FaceWorker::FaceWorker(QObject *parent)
     : QObject{parent},m_abort(false)
@@ -9,6 +10,7 @@ FaceWorker::~FaceWorker(){
     stop();
     if (cap.isOpened()){
         cap.release();
+        destroyAllWindows();
     }
 }
 
@@ -52,27 +54,33 @@ void FaceWorker::process(){
                 cv::resize(faceROI,faceROI,Size(200,200));
 
                 model->predict(faceROI,label,confidence);
-                Scalar color;
-                if (confidence < 70.0 && label == 1){
-                    color = Scalar(0,255,0);
-                    putText(frame,"ID:1",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                    isFound = true;
-                } else {
-                    color = Scalar(0,0,255);
-                    putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
-                }
+                Scalar color(0,255,0);
+                //if (confidence < 85.0 && label >=0){
+                    //color = Scalar(0,255,0);
+                    //string final = "ID: " + to_string(label);
+                    //putText(frame,final,Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                    //isFound = true;
+                //} else {
+                    //color = Scalar(0,0,255);
+                    //putText(frame,"Unknown",Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
+                //}
+                //debugging part
+                rectangle(frame,faceRect,color,2);
+                string final = "ID: " + to_string(label) + " Conf: " + to_string(confidence);
+                putText(frame,final,Point(faceRect.x,faceRect.y - 10),FONT_HERSHEY_SIMPLEX,0.8,color,2);
                 rectangle(frame,faceRect,color,2);
 
+
             }
-            emit frameReady(frame);
-            waitKey(1);
+            emit frameReady(frame.clone());
+            QThread::msleep(30);
             if (isFound) {
                 emit faceRecognized(label);
-                if (cap.isOpened()) {
-                    cap.release();
-                }
                 break;
             }
+        }
+        if (cap.isOpened()) {
+            cap.release();
         }
         emit finished();
     }

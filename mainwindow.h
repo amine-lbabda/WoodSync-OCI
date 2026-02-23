@@ -54,7 +54,6 @@ private:
     vector<Rect> faces;
     Ptr<face::LBPHFaceRecognizer> model;
     CascadeClassifier faceCascade;
-    QMessageBox msgBox;
 
 };
 #endif // MAINWINDOW_H
