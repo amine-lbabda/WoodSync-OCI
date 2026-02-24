@@ -35,11 +35,11 @@ unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
 DISTFILES += \
-    ../test.yml \
     .env \
     .env.example \
     README.md \
     face_model.xml \
     haarcascade_frontalface_default.xml \
     haarcascade_profileface.xml \
+    test.yml \
     woodsync_model.yml
