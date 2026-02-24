@@ -22,7 +22,7 @@ MainWindow::~MainWindow()
     delete ui;
     if (cap.isOpened()){
         cap.release();
-        destroyWindow(Title);
+        destroyAllWindows();
     }
 
 }
