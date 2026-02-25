@@ -268,6 +268,329 @@ QPushButton:hover {
         </item>
        </layout>
       </widget>
+      <widget class="QFrame" name="horizontalFrame_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>450</y>
+         <width>561</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border:0px solid;</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>90</number>
+        </property>
+        <property name="rightMargin">
+         <number>90</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Vous n'avez-pas un compte? &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="ConnectionLink_2">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;CreateAccount&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; text-decoration: underline;&quot;&gt;créez votre compte &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="CreateAccountPage">
+     <widget class="QFrame" name="frame_17">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>60</y>
+        <width>581</width>
+        <height>521</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QFrame {
+	color: rgb(0, 51, 102);
+    border: 3px solid #7F5539;   /* Bleu roi (Royal Blue) */
+    border-radius: 20px;
+    font-family: &quot;Roboto Condensed&quot;;
+    background-color: white;
+}
+QLabel {
+ border: 3px solid white; 
+    font-weight: 500;   /* un peu plus épais que normal */
+    font-size: 15px;
+}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>10</y>
+         <width>141</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">image: url(:/images/wood-removebg-preview.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QWidget" name="formWidget_5" native="true">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>90</y>
+         <width>531</width>
+         <height>361</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:transparent;
+border:0px solid;</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_9">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
+        </property>
+        <property name="rowWrapPolicy">
+         <enum>QFormLayout::RowWrapPolicy::DontWrapRows</enum>
+        </property>
+        <property name="labelAlignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+        <property name="formAlignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+        <property name="horizontalSpacing">
+         <number>10</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>30</number>
+        </property>
+        <property name="leftMargin">
+         <number>20</number>
+        </property>
+        <property name="topMargin">
+         <number>40</number>
+        </property>
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="LType_9">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Nom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="nom_22">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="LType_19">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Prénom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="nom_23">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="LType_8">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Email</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="nom_18">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="LEffectif_7">
+          <property name="text">
+           <string>Mot de passe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="nom_19">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="BtnLogin_3">
+          <property name="font">
+           <font>
+            <family>Roboto Condensed</family>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+ }
+</string>
+          </property>
+          <property name="text">
+           <string>S&quot;inscrire</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="horizontalFrame">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>449</y>
+         <width>561</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border:0px solid;</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>90</number>
+        </property>
+        <property name="rightMargin">
+         <number>90</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Avez-vous un compte menuisier? &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="ConnectionLink">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; text-decoration: underline;&quot;&gt;
+&lt;a href=&quot;loginPage&quot;&gt;se connecter&lt;a/&gt;
+&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="GestionStockPage">

@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(1);
     ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -116,7 +116,20 @@ void MainWindow::handleFrame(Mat frame)
 {
     if (frame.empty()) return;
     cv::imshow(Title,frame);
-    waitKey(1);
+    //waitKey(1);
+}
+void MainWindow::on_ConnectionLink_linkActivated(const QString &link)
+{
+    if (link == "loginPage") {
+        ui->stackedWidget->setCurrentIndex(0);
+    }
 }
 
+
+void MainWindow::on_ConnectionLink_2_linkActivated(const QString &link)
+{
+    if (link == "CreateAccount") {
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+}
 
