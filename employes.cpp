@@ -139,3 +139,22 @@ bool Employes::existanceCompte()
     return false;
 }
 
+bool Employes::ajoutReconaissanceFaciale(QByteArray data)
+{
+    if (data.isEmpty()) {
+        return false;
+    }
+    QSqlQuery query;
+    query.prepare("UPDATE EMPLOYES SET FACE_EMBEDDING=? WHERE NOM=? AND PRENOM=?");
+    query.addBindValue(data);
+    query.addBindValue(nom);
+    query.addBindValue(prenom);
+    if (!query.exec()) {
+        qDebug() << "Oracle Error:" << query.lastError().text();
+        return false;
+    } else {
+        qDebug() << "Employee added successfully!";
+        return true;
+    }
+}
+

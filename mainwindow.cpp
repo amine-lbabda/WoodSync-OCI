@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    loadFaceRegistry();
+    detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
+    recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
     ui->setupUi(this);
     ui->tableView->setModel(Etmp.afficher());
     ui->stackedWidget->setCurrentIndex(1);
@@ -27,12 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
     QList<QDateEdit*> allDates = this->findChildren<QDateEdit*>();
     for (QList<QDateEdit*>::Iterator it=allDates.begin();it != allDates.end();++it) {
         (*it)->setCalendarPopup(true);
+        setupCalendar((*it)->calendarWidget());
     }
-
-    ui->DateNaissance->calendarWidget()->setStyleSheet(this->styleSheet());
-    ui->DateRecrutementEmploye->calendarWidget()->setStyleSheet(this->styleSheet());
-    setupCalendar(ui->DateNaissance->calendarWidget());
-    setupCalendar(ui->DateRecrutementEmploye->calendarWidget());
 }
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     if (!calendar) return;
@@ -59,6 +58,10 @@ void MainWindow::setupCalendar(QCalendarWidget *calendar) {
 MainWindow::~MainWindow()
 {
     delete ui;
+    if (cap.isOpened()) {
+        cap.release();
+        destroyAllWindows();
+    }
 
 }
 
@@ -129,94 +132,55 @@ void MainWindow::on_BtnLogin_clicked()
 
 void MainWindow::on_BtnLoginFace_clicked()
 {
-    // 1. Initialize Models
-    QString detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
-    QString recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
-
-    // 2. Load the Reference Image (The "Target" to match)
-    cv::Mat imageRef = cv::imread("/home/amine/Desktop/dataset/amine/1.jpg");
-    if (imageRef.empty()) {
-        qDebug() << "Error: Could not load reference image!";
-        return;
-    }
-
-    // 3. Create Detector & Recognizer
-    // We initialize the detector with imageRef size first to extract the target feature
-    detector = cv::FaceDetectorYN::create(detPath.toStdString(), "", imageRef.size(), 0.5f, 0.3f, 5000, cv::dnn::DNN_BACKEND_CUDA, cv::dnn::DNN_TARGET_CUDA);
-    recognizer = cv::FaceRecognizerSF::create(recPath.toStdString(), "", cv::dnn::DNN_BACKEND_CUDA, cv::dnn::DNN_TARGET_CUDA);
-
-    // 4. Extract the "Stored Feature" from your photo (Done ONCE)
-    cv::Mat refFaces, alignedRef, storeFeature;
-    detector->detect(imageRef, refFaces);
-
-    if (refFaces.rows > 0) {
-        recognizer->alignCrop(imageRef, refFaces.row(0), alignedRef);
-        recognizer->feature(alignedRef, storeFeature);
-        // We clone to ensure the memory stays valid throughout the loop
-        storeFeature = storeFeature.clone();
-        qDebug() << "Reference feature extracted. Ready for camera...";
-    } else {
-        qDebug() << "No face found in reference photo. Login aborted.";
-        return;
-    }
-
-    // 5. Open Camera
     cap.open(0);
-    if (!cap.isOpened()) {
-        qDebug() << "Could not open camera!";
-        return;
-    }
-
-    cv::Mat frame, faces;
-    while (cap.read(frame)) {
+    if (!cap.isOpened()) return;
+    Mat frame,faces;
+    bool isSuccess = false;
+    while (cap.read(frame) && !isSuccess) {
         if (frame.empty()) break;
-
-        // Update detector for the camera frame size
         detector->setInputSize(frame.size());
-        detector->detect(frame, faces);
-
-        for (int i = 0; i < faces.rows; i++) {
-            // A. Align and Extract from the LIVE Camera Frame
-            cv::Mat alignedLive, liveFeature;
-            recognizer->alignCrop(frame, faces.row(i), alignedLive);
-            recognizer->feature(alignedLive, liveFeature);
-
-            // B. Compare Live vs Stored
-            // Cosine Similarity: 1.0 is identical, 0.363 is the standard threshold
-            double score = recognizer->match(liveFeature, storeFeature);
-
-            // C. Visual Feedback
-            float* f = faces.ptr<float>(i);
-            cv::Rect faceRect(f[0], f[1], f[2], f[3]);
-
-            cv::Scalar color = (score > 0.363) ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
-            QString label = (score > 0.363) ? "AMINE" : "UNKNOWN";
-            label += QString(" (%1)").arg(score, 0, 'f', 2);
-
-            cv::rectangle(frame, faceRect, color, 2);
-            cv::putText(frame, label.toStdString(), cv::Point(f[0], f[1] - 10),
-                        cv::FONT_HERSHEY_SIMPLEX, 0.6, color, 2);
-
-            if (score > 0.363) {
-                qDebug() << "Match Found! Score:" << score;
-                // Optional: break loop and trigger login success here
+        detector->detect(frame,faces);
+        if (faces.rows > 0) {
+            Mat alignedLive,liveFeature;
+            recognizer->alignCrop(frame,faces.row(0),alignedLive);
+            recognizer->feature(alignedLive,liveFeature);
+            int matchId = -1;
+            QString matchName = "UNKNOWN";
+            double maxScore = 0.0;
+            for (vector<FaceTemplate>::iterator it = registry.begin(); it != registry.end(); ++it) {
+                double score = recognizer->match(liveFeature,it->vector);
+                if (score > 0.363 && score > maxScore) {
+                    maxScore = score;
+                    matchId = it->id;
+                    matchName = it->name;
+                }
             }
-        }
-
-        cv::imshow("Face Login Test", frame);
-
-        // Process GUI events to keep the window responsive
-        QCoreApplication::processEvents();
-
-        // Exit on 'ESC' or if window is closed
-        if (cv::waitKey(1) == 27) {
-            break;
+            float *f = faces.ptr<float>(0);
+            Rect faceRect(f[0],f[1],f[2],f[3]);
+            Scalar color;
+            if (matchId != -1) {
+                color = Scalar(0,255,0);
+            } else {
+                color = Scalar(0,0,255);
+            }
+            rectangle(frame,faceRect,color,2);
+            putText(frame,matchName.toStdString() + "(" + QString::number(maxScore,'f',2).toStdString() + ")",Point(f[0],f[1]-10),FONT_HERSHEY_SIMPLEX,0.6,color,2);
+            imshow("Reconnaissance faciale",frame);
+            QThread::msleep(2000);
+            if (matchId != -1) {
+                isSuccess = true;
+            }
+            if (waitKey(1) == 27 || !getWindowProperty("Reconnaissance faciale",WND_PROP_VISIBLE)) break;
         }
     }
-
     cap.release();
-    cv::destroyAllWindows();
+    destroyAllWindows();
+    if (isSuccess) {
+        ui->stackedWidget->setCurrentIndex(2);
+    }
+
 }
+
 
 //void MainWindow::handleFrame(Mat frame)
 //{
@@ -406,8 +370,100 @@ void MainWindow::on_InscriptionEmploye_clicked()
 
     if (e.ajoutCompte()){
         QMessageBox::information(nullptr,tr("Succées"),tr("Votre compte a été crée avec succés"));
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(nullptr,tr("Reconaissance faciale"),tr("Voulez-vous configurer votre reconnaissance faciale?"),QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            cap.open(0);
+            if (!cap.isOpened()) {
+                qDebug() << "Could not open camera!";
+                return;
+            }
+
+            cv::Mat frame, faces;
+            while (cap.read(frame)) {
+                if (frame.empty()) break;
+
+                // Update detector for the camera frame size
+                detector->setInputSize(frame.size());
+                detector->detect(frame, faces);
+                if (faces.rows > 0) {
+                    float *f = faces.ptr<float>(0);
+                    Rect faceRect(f[0],f[1],f[2],f[3]);
+                    rectangle(frame,faceRect,Scalar(255,255,0),2);
+                    putText(frame,"Appuyez sur s pour sauvgarder votre image !",Point(10,30),FONT_HERSHEY_COMPLEX,0.7,Scalar(255,255,0),2);
+                    imshow("Enregistrement biométrique WoodSync",frame);
+                    int key = waitKey(1);
+                    if (key == 's' || key == 'S'){
+                        if (faces.rows == 1) {
+                            Mat alignedFace,featureVector;
+                            recognizer->alignCrop(frame,faces.row(0),alignedFace);
+                            recognizer->feature(alignedFace,featureVector);
+                            QByteArray data(reinterpret_cast<const char*>(featureVector.data),featureVector.total()*featureVector.elemSize());
+                            if (e.ajoutReconaissanceFaciale(data)) {
+                                QMessageBox::information(nullptr,tr("Succés"),tr("Profile biométrique sauvgardé avec succés !"));
+                                break;
+                            } else {
+                                QMessageBox::critical(nullptr,tr("Échec"),tr("Une personne doit être visible"));
+                            }
+                        }
+                    }
+
+                    // A. Align and Extract from the LIVE Camera Frame
+                }
+            }
+            cap.release();
+            cv::destroyAllWindows();
+        } else {
+            ui->stackedWidget->setCurrentIndex(2);
+        }
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Erreur lors du traitement du votre requête !"));
     }
 }
+
+void MainWindow::loadFaceRegistry() {
+    registry.clear();
+    QSqlQuery query("SELECT IDEMPLOYE, NOM, FACE_EMBEDDING FROM EMPLOYES");
+
+    while (query.next()) {
+        QByteArray data = query.value(2).toByteArray();
+        if (!data.isEmpty()) {
+            FaceTemplate ft; //
+            ft.id = query.value(0).toInt();
+            ft.name = query.value(1).toString();
+
+            // Reconstruct the 1x128 float matrix
+            // Use .clone() so the data isn't lost when the QByteArray goes out of scope
+            ft.vector = cv::Mat(1, 128, CV_32F, const_cast<char*>(data.data())).clone();
+
+            registry.push_back(ft); // This will now match the vector<FaceTemplate>
+        }
+    }
+}
+
+/*
+ * void MainWindow::loadFaceRegistry() {
+    registry.clear();
+    QSqlQuery query("SELECT IDEMPLOYE, NOM, FACE_EMBEDDING FROM EMPLOYES");
+
+    while (query.next()) {
+        QByteArray data = query.value(2).toByteArray();
+        if (!data.isEmpty()) {
+            FaceTemplate ft;
+            ft.id = query.value(0).toInt();
+            ft.name = query.value(1).toString();
+
+            // DO NOT point to data.data() directly.
+            // Copy the bytes into a temporary vector first to ensure alignment
+            std::vector<float> buffer(data.size() / sizeof(float));
+            memcpy(buffer.data(), data.constData(), data.size());
+
+            // Create the Mat from the safe buffer and CLONE it
+            ft.vector = cv::Mat(buffer).clone();
+
+            registry.push_back(ft);
+        }
+    }
+}
+ */
 

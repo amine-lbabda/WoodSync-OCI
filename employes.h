@@ -6,7 +6,14 @@
 #include <QSqlTableModel>
 #include <QDate>
 #include <QTableView>
-using namespace std;
+#include <opencv2/opencv.hpp>
+using namespace cv;
+struct FaceTemplate {
+    int id;
+    QString name;
+    Mat vector;
+};
+
 class Employes
 {
 public:
@@ -84,6 +91,7 @@ public:
     bool supprimer(int id);
     bool ajoutCompte();
     bool existanceCompte();
+    bool ajoutReconaissanceFaciale(QByteArray data);
 
 
 private:

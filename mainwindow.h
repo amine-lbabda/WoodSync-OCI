@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QRandomGenerator64>
 #include <QCryptographicHash>
+#include <vector>
 using namespace std;
 using namespace cv;
 
@@ -71,6 +72,9 @@ private:
     VideoCapture cap;
     Ptr<FaceDetectorYN> detector;
     Ptr<FaceRecognizerSF> recognizer;
-
+    vector<FaceTemplate> registry;
+    void loadFaceRegistry();
+    QString detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
+    QString recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
 };
 #endif // MAINWINDOW_H
