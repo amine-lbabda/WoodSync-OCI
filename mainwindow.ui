@@ -32,6 +32,38 @@ QLineEdit, QComboBox, QDateEdit, QSpinBox {
     border-radius: 5px;
     padding: 6px;
     background: #fff;
+}
+
+/* 1. The main grid where the numbers are */
+QCalendarWidget QAbstractItemView {
+    background-color: #ffffff !important;
+    color: #000000 !important; /* Black text for dates */
+    selection-background-color: #4CAF50 !important; /* Green highlight for selected day */
+    selection-color: #ffffff !important; /* White text on the green selection */
+}
+
+/* 2. The top bar (Month and Year area) */
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: #ffffff !important;
+}
+
+/* 3. The Month/Year text and Navigation Arrows */
+QCalendarWidget QToolButton {
+    color: #000000 !important; /* Black text so you can read &quot;January 2024&quot; */
+    background-color: #ffffff !important;
+    border: none;
+}
+
+/* 4. The area showing 'Mon, Tue, Wed...' */
+QCalendarWidget QWidget { 
+    alternate-background-color: #f2f2f2; /* Light gray for alternating rows */
+    color: #000000; 
+}
+
+/* 5. Fix for the drop-down menus inside the calendar */
+QCalendarWidget QMenu {
+    background-color: #ffffff;
+    color: #000000;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -153,12 +185,12 @@ border:0px solid;</string>
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>Email</string>
+           <string>Nom</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="nom_14">
+         <widget class="QLineEdit" name="NomLoginMenuisier">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -177,15 +209,15 @@ QLineEdit:focus {
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="LEffectif_5">
           <property name="text">
            <string>Mot de passe</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="nom_15">
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="MdpLoginMenuisier">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -202,9 +234,43 @@ QLineEdit:focus {
 }
 </string>
           </property>
+          <property name="echoMode">
+           <enum>QLineEdit::EchoMode::Password</enum>
+          </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="0">
+         <widget class="QPushButton" name="BtnLogin">
+          <property name="font">
+           <font>
+            <family>Roboto Condensed</family>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+ }
+</string>
+          </property>
+          <property name="text">
+           <string>S'identifier</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
          <widget class="QPushButton" name="BtnLoginFace">
           <property name="font">
            <font>
@@ -235,34 +301,33 @@ QPushButton:hover {
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="BtnLogin">
-          <property name="font">
-           <font>
-            <family>Roboto Condensed</family>
-            <pointsize>-1</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="LType_7">
           <property name="styleSheet">
-           <string notr="true">QPushButton {
-    background-color: #414833;   /* Or brillant */
-    color: #E5EEF5;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 15px;
-    padding: 6px 15px;
-    font-family: &quot;Roboto Condensed&quot;;
-    border: 2px solid #b8860b;   /* Or foncé */
-}
-QPushButton:hover {
-          background-color: #656D4A;
-          border: 2px solid #656D4A;
- }
-</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string>S'identifier</string>
+           <string>Prénom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="PrenomLoginMenuisier">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
           </property>
          </widget>
         </item>
@@ -412,7 +477,7 @@ border:0px solid;</string>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="nom_22">
+         <widget class="QLineEdit" name="NomMenuisier">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -442,37 +507,7 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="nom_23">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
-    border: 2px solid #7F5539
-;   /* Gris doux */
-    border-radius: 6px;
-    padding: 4px 8px;
-    background: #f9f9f9;         /* Fond légèrement gris clair */
-    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
-    font-size: 14px;
-}
-QLineEdit:focus {
-    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
-    background: #ffffff;
-}
-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="LType_8">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Email</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="nom_18">
+         <widget class="QLineEdit" name="PrenomMenuisier">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -499,7 +534,7 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="nom_19">
+         <widget class="QLineEdit" name="MdpMenuisiser">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -516,10 +551,13 @@ QLineEdit:focus {
 }
 </string>
           </property>
+          <property name="echoMode">
+           <enum>QLineEdit::EchoMode::Password</enum>
+          </property>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QPushButton" name="BtnLogin_3">
+         <widget class="QPushButton" name="InscriptionEmploye">
           <property name="font">
            <font>
             <family>Roboto Condensed</family>
@@ -546,6 +584,23 @@ QPushButton:hover {
           </property>
           <property name="text">
            <string>S&quot;inscrire</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="LAdresse_10">
+          <property name="styleSheet">
+           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Date Naissance&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDateEdit" name="DateNaissanceMenuisier">
+          <property name="styleSheet">
+           <string notr="true">border: 3px solid #7F5539;</string>
           </property>
          </widget>
         </item>
@@ -1526,148 +1581,6 @@ QHeaderView::section:horizontal:last {
      </widget>
     </widget>
     <widget class="QWidget" name="GestionEmployePage">
-     <widget class="QTableWidget" name="tableView_3">
-      <property name="geometry">
-       <rect>
-        <x>450</x>
-        <y>60</y>
-        <width>691</width>
-        <height>192</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">/* The main table container */
-QTableWidget {
-    background-color: #FFFFFF;
-    border: 2px solid #7F5539;
-    border-radius: 12px; /* Increased for a smoother look */
-    gridline-color: #F0F0F0; /* Lighter gridlines for modern feel */
-    outline: 0; /* Removes the dotted line when clicking a cell */
-}
-
-/* Fix: Rounding the top corners of the header to match the table */
-QHeaderView {
-    background-color: transparent;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-QHeaderView::section {
-    background-color: #656D4A;
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 12px;
-    padding: 10px 5px; /* Reduced padding to prevent text from touching edges */
-    border: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
-}
-
-/* Remove the border from the very last header section */
-QHeaderView::section:last {
-    border-right: none;
-}
-
-/* Table Item Styling */
-QTableWidget::item {
-    padding: 10px;
-    color: #333333;
-    border-bottom: 1px solid #F0F0F0;
-}
-
-/* Highlight row on hover */
-QTableWidget::item:hover {
-    background-color: #FDFCFB;
-}
-
-/* Style for selected rows */
-QTableWidget::item:selected {
-    background-color: #EDE7E3;
-    color: #7F5539;
-}
-
-/* Ensure the header container itself is rounded at the top */
-QHeaderView {
-    background-color: transparent;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-/* Round the first and last sections specifically */
-QHeaderView::section:horizontal:first {
-    border-top-left-radius: 8px;
-}
-
-QHeaderView::section:horizontal:last {
-    border-top-right-radius: 8px;
-    border-right: none;
-}
-QHeaderView {
-    background-color: #656D4A; /* Same as your section color */
-}
-/* This styles the entire header bar background */
-QHeaderView {
-    background-color: #656D4A; /* Matches your green sections */
-    border: none;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-/* This styles the individual column boxes */
-QHeaderView::section {
-    background-color: #656D4A;
-    color: #FFFFFF;
-    padding: 12px;
-    border: none;
-    /* Use a very subtle divider so it looks like one solid bar */
-    border-right: 1px solid rgba(255, 255, 255, 0.1); 
-}
-
-/* Specific fix for the 'weird' corner clipping */
-QHeaderView::section:horizontal:first {
-    border-top-left-radius: 10px;
-}
-
-QHeaderView::section:horizontal:last {
-    border-top-right-radius: 10px;
-    border-right: none;
-}</string>
-      </property>
-      <column>
-       <property name="text">
-        <string>Nom</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Prénom</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Naissance</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Rôle</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Tel</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Recrutement</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>durée</string>
-       </property>
-      </column>
-     </widget>
      <widget class="QFrame" name="frame_13">
       <property name="geometry">
        <rect>
@@ -1697,7 +1610,7 @@ QLabel {
       <property name="frameShadow">
        <enum>QFrame::Shadow::Raised</enum>
       </property>
-      <widget class="QPushButton" name="BtnAjouter_6">
+      <widget class="QPushButton" name="AjoutEmploye">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1778,26 +1691,6 @@ border:0px solid;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="nom_10">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
-    border: 2px solid #7F5539
-;   /* Gris doux */
-    border-radius: 6px;
-    padding: 4px 8px;
-    background: #f9f9f9;         /* Fond légèrement gris clair */
-    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
-    font-size: 14px;
-}
-QLineEdit:focus {
-    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
-    background: #ffffff;
-}
-</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="LEffectif_4">
           <property name="styleSheet">
@@ -1809,7 +1702,7 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="nom_13">
+         <widget class="QLineEdit" name="PrenomEmploye">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -1838,13 +1731,6 @@ QLineEdit:focus {
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QDateEdit" name="dateEdit_5">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539</string>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="0">
          <widget class="QLabel" name="LStatut_6">
           <property name="styleSheet">
@@ -1856,13 +1742,13 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QComboBox" name="comboBox_3">
+         <widget class="QComboBox" name="RoleEmploye">
           <property name="styleSheet">
            <string notr="true">border: 3px solid #7F5539</string>
           </property>
           <item>
            <property name="text">
-            <string>Employe</string>
+            <string>Employé</string>
            </property>
           </item>
           <item>
@@ -1873,6 +1759,11 @@ QLineEdit:focus {
           <item>
            <property name="text">
             <string>Menuisier</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Stagiaire</string>
            </property>
           </item>
          </widget>
@@ -1888,7 +1779,7 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QLineEdit" name="nom_12">
+         <widget class="QLineEdit" name="TelEmploye">
           <property name="styleSheet">
            <string notr="true">QLineEdit {
     border: 2px solid #7F5539
@@ -1918,7 +1809,7 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QDateEdit" name="dateEdit_6">
+         <widget class="QDateEdit" name="DateRecrutementEmploye">
           <property name="styleSheet">
            <string notr="true">border: 3px solid #7F5539</string>
           </property>
@@ -1935,9 +1826,36 @@ QLineEdit:focus {
          </widget>
         </item>
         <item row="6" column="1">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+         <widget class="QDoubleSpinBox" name="HeuresTravailleEmploye">
           <property name="styleSheet">
            <string notr="true">border: 3px solid #7F5539</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="nomEmploye">
+          <property name="styleSheet">
+           <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDateEdit" name="DateNaissance">
+          <property name="styleSheet">
+           <string notr="true">border: 3px solid #7F5539;</string>
           </property>
          </widget>
         </item>
@@ -1962,7 +1880,7 @@ QLineEdit:focus {
         <number>20</number>
        </property>
        <item>
-        <widget class="QPushButton" name="exporter_4">
+        <widget class="QPushButton" name="ExportEmploye">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background-color: #414833;   /* Or brillant */
@@ -1987,39 +1905,7 @@ QPushButton:hover {
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="BtnModifier_2">
-         <property name="font">
-          <font>
-           <family>Roboto Condensed</family>
-           <pointsize>-1</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QPushButton {
-    background-color: #414833;   /* Or brillant */
-    color: #E5EEF5;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 15px;
-    padding: 6px 15px;
-    font-family: &quot;Roboto Condensed&quot;;
-    border: 2px solid #b8860b;   /* Or foncé */
-}
-
-QPushButton:hover {
-          background-color: #656D4A;
-          border: 2px solid #656D4A;
-}
-</string>
-         </property>
-         <property name="text">
-          <string>Modifier</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="BtnSupprimer_2">
+        <widget class="QPushButton" name="SupprimerEmploye">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background-color: #414833;   /* Or brillant */
@@ -2062,7 +1948,7 @@ QPushButton:hover {
         <number>20</number>
        </property>
        <item>
-        <widget class="QPushButton" name="BtnSupprimer_4">
+        <widget class="QPushButton" name="TrierEmploye">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background-color: #414833;   /* Or brillant */
@@ -2087,7 +1973,7 @@ QPushButton:hover {
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="LineRecherche_2">
+        <widget class="QLineEdit" name="RechercheEmploye">
          <property name="styleSheet">
           <string notr="true">QLineEdit {
     border: 2px solid #7F5539;   /* Gris doux */
@@ -2106,7 +1992,7 @@ QLineEdit:focus {
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="BtnSupprimer_3">
+        <widget class="QPushButton" name="RechercheEmployeBtn">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background-color: #414833;   /* Or brillant */
@@ -2183,7 +2069,7 @@ QPushButton:hover {
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;Statistiques employés&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="BtnAjouter_36">
+      <widget class="QPushButton" name="StatistiquesEmploye">
        <property name="geometry">
         <rect>
          <x>120</x>
@@ -2234,6 +2120,79 @@ QPushButton:hover {
         <string notr="true">background-color: rgb(253, 255, 237);</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>60</y>
+        <width>691</width>
+        <height>192</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">/* 1. The main table container */
+QTableView {
+    background-color: #FFFFFF;
+    border: 2px solid #7F5539;
+    border-radius: 12px;
+    gridline-color: #F0F0F0;
+    outline: 0;
+    color: #333333; /* Forces text to be dark even if global is white */
+}
+
+/* 2. The Header Bar Container */
+QHeaderView {
+    background-color: #656D4A; 
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: none;
+}
+
+/* 3. Individual Header Sections */
+QHeaderView::section {
+    background-color: #656D4A;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 10px;
+    border: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Rounding the outer corners of the header */
+QHeaderView::section:horizontal:first {
+    border-top-left-radius: 10px;
+}
+
+QHeaderView::section:horizontal:last {
+    border-top-right-radius: 10px;
+    border-right: none;
+}
+
+/* 4. Table Item Styling (FIXED: Changed from QTableWidget to QTableView) */
+QTableView::item {
+    padding: 10px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+/* Hover effect */
+QTableView::item:hover {
+    background-color: #FDFCFB;
+}
+
+/* Selection effect */
+QTableView::item:selected {
+    background-color: #EDE7E3;
+    color: #7F5539;
+}
+
+/* Corner Widget (The tiny square where headers meet) */
+QTableCornerButton::section {
+    background-color: #656D4A;
+    border: none;
+}</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="GestionCommandesPage">

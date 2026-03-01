@@ -2,35 +2,36 @@
 #define FACEWORKER_H
 
 #include <QObject>
-#include <QMutex>
 #include <opencv2/opencv.hpp>
-#include <opencv2/face.hpp>
+#include <opencv2/objdetect.hpp>
+#include <opencv2/dnn.hpp>
+#include <string>
 #include <vector>
-#include <QThread>
-using namespace cv;
 using namespace std;
+using namespace cv;
+using namespace cv::dnn;
 class FaceWorker : public QObject
 {
     Q_OBJECT
 public:
-    FaceWorker(QObject *parent = nullptr);
-    ~FaceWorker();
+    explicit FaceWorker(QObject *parent = nullptr);
+    void stop();
 public slots:
     void process();
-    void stop();
+
 
 signals:
-    void faceRecognized(int userId);
-    void frameReady(const cv::Mat& frame);
+    void employeeRecognized(int employeeId,QString fullName);
     void finished();
-    void error(bool isError);
+    void errorOccured(QString message);
 private:
-    bool m_abort;
-    QMutex mutex;
+    Ptr<FaceDetectorYN> m_detector;
+    Ptr<FaceRecognizerSF> m_recognizer;
+    QString m_detectorPath;
+    QString m_recognizerPath;
+    bool m_running;
     VideoCapture cap;
-    Ptr<face::LBPHFaceRecognizer> model;
-    CascadeClassifier faceCascade;
-    vector<Rect> faces;
+
 };
 
 #endif // FACEWORKER_H

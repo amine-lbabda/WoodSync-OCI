@@ -5,9 +5,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
     Connection &c = Connection::createInstance();
     bool test = c.createConnection();
+    MainWindow w;
+
     QMessageBox msgBox;
     msgBox.setCursor(Qt::PointingHandCursor);
     msgBox.setStandardButtons(QMessageBox::Ok);

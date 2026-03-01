@@ -4,8 +4,12 @@
 #include <QMainWindow>
 #include <opencv2/opencv.hpp>
 #include <opencv2/face.hpp>
-#include <vector>
 #include <QMessageBox>
+#include <QCalendarWidget>
+#include "employes.h"
+#include <QTimer>
+#include <QRandomGenerator64>
+#include <QCryptographicHash>
 using namespace std;
 using namespace cv;
 
@@ -22,6 +26,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private:
+    void setupCalendar(QCalendarWidget *calendar);
 
 private slots:
     void on_GestionStock_clicked();
@@ -44,20 +51,26 @@ private slots:
 
     void on_BtnLoginFace_clicked();
 
-    void handleFrame(cv::Mat frame);
+
 
     void on_ConnectionLink_linkActivated(const QString &link);
 
     void on_ConnectionLink_2_linkActivated(const QString &link);
 
+    void on_AjoutEmploye_clicked();
+
+    void on_SupprimerEmploye_clicked();
+
+    void on_tableView_doubleClicked(const QModelIndex &index);
+
+    void on_InscriptionEmploye_clicked();
+
 private:
     Ui::MainWindow *ui;
+    Employes Etmp;
     VideoCapture cap;
-    Mat frame,output;
-    const String Title="Reconnaissance faciale";
-    vector<Rect> faces;
-    Ptr<face::LBPHFaceRecognizer> model;
-    CascadeClassifier faceCascade;
+    Ptr<FaceDetectorYN> detector;
+    Ptr<FaceRecognizerSF> recognizer;
 
 };
 #endif // MAINWINDOW_H

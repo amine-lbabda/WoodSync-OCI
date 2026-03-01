@@ -10,14 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     connection.cpp \
-    faceworker.cpp \
+    employes.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     connection.h \
     dotenv.h \
-    faceworker.h \
+    employes.h \
     mainwindow.h
 
 FORMS += \
@@ -38,8 +38,6 @@ DISTFILES += \
     .env \
     .env.example \
     README.md \
+    face_detection_yunet_2023mar.onnx \
     face_model.xml \
-    haarcascade_frontalface_default.xml \
-    haarcascade_profileface.xml \
-    test.yml \
-    woodsync_model.yml
+    face_recognition_sface_2021dec.onnx
