@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qtconcurrentrun.h"
 #include "ui_mainwindow.h"
 #include <QThread>
 #include "employes.h"
@@ -8,8 +9,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     loadFaceRegistry();
-    detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
-    recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
+    std::ignore = QtConcurrent::run([this](){
+        detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
+        recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
+    });
     ui->setupUi(this);
     ui->tableView->setModel(Etmp.afficher());
     ui->stackedWidget->setCurrentIndex(1);
@@ -132,52 +135,72 @@ void MainWindow::on_BtnLogin_clicked()
 
 void MainWindow::on_BtnLoginFace_clicked()
 {
-    cap.open(0);
-    if (!cap.isOpened()) return;
-    Mat frame,faces;
-    bool isSuccess = false;
-    while (cap.read(frame) && !isSuccess) {
-        if (frame.empty()) break;
-        detector->setInputSize(frame.size());
-        detector->detect(frame,faces);
-        if (faces.rows > 0) {
-            Mat alignedLive,liveFeature;
-            recognizer->alignCrop(frame,faces.row(0),alignedLive);
-            recognizer->feature(alignedLive,liveFeature);
+    std::ignore = QtConcurrent::run([this](){
+        cap.open(0);
+        if (!cap.isOpened()) return;
+        Mat frame, faces;
+        bool isSuccess = false;
+
+        while (cap.read(frame)) {
+            if (frame.empty()) break;
+
             int matchId = -1;
-            QString matchName = "UNKNOWN";
-            double maxScore = 0.0;
-            for (vector<FaceTemplate>::iterator it = registry.begin(); it != registry.end(); ++it) {
-                double score = recognizer->match(liveFeature,it->vector);
-                if (score > 0.363 && score > maxScore) {
-                    maxScore = score;
-                    matchId = it->id;
-                    matchName = it->name;
+            detector->setInputSize(frame.size());
+            detector->detect(frame, faces);
+
+            if (faces.rows > 0) {
+                Mat alignedLive, liveFeature;
+                recognizer->alignCrop(frame, faces.row(0), alignedLive);
+                recognizer->feature(alignedLive, liveFeature);
+
+                QString matchName = "UNKNOWN";
+                double maxScore = 0.0;
+
+                for (auto it = registry.begin(); it != registry.end(); ++it) {
+                    double score = recognizer->match(liveFeature, it->vector);
+                    if (score > 0.363 && score > maxScore) {
+                        maxScore = score;
+                        matchId  = it->id;
+                        matchName = it->name;
+                    }
                 }
+
+                float *f = faces.ptr<float>(0);
+                Rect faceRect(f[0], f[1], f[2], f[3]);
+                Scalar color = (matchId != -1) ? Scalar(0,255,0) : Scalar(0,0,255);
+                rectangle(frame, faceRect, color, 2);
+                putText(frame,
+                        matchName.toStdString() + " (" + QString::number(maxScore,'f',2).toStdString() + ")",
+                        Point(f[0], f[1]-10), FONT_HERSHEY_SIMPLEX, 0.6, color, 2);
             }
-            float *f = faces.ptr<float>(0);
-            Rect faceRect(f[0],f[1],f[2],f[3]);
-            Scalar color;
+
+            // Display + get key — ALL on main thread
+            Mat frameCopy = frame.clone();
+            bool shouldBreak = false;
+            QMetaObject::invokeMethod(this, [frameCopy, &shouldBreak](){
+                imshow("Reconnaissance faciale", frameCopy);
+                int key = waitKey(1);
+                if (key == 27 || !getWindowProperty("Reconnaissance faciale", WND_PROP_VISIBLE))
+                    shouldBreak = true;
+            }, Qt::BlockingQueuedConnection);
+
+            if (shouldBreak) break;
+
+            // Show green rectangle for 1 second THEN redirect
             if (matchId != -1) {
-                color = Scalar(0,255,0);
-            } else {
-                color = Scalar(0,0,255);
-            }
-            rectangle(frame,faceRect,color,2);
-            putText(frame,matchName.toStdString() + "(" + QString::number(maxScore,'f',2).toStdString() + ")",Point(f[0],f[1]-10),FONT_HERSHEY_SIMPLEX,0.6,color,2);
-            imshow("Reconnaissance faciale",frame);
-            QThread::msleep(2000);
-            if (matchId != -1) {
+                QThread::msleep(500);
                 isSuccess = true;
+                break;
             }
-            if (waitKey(1) == 27 || !getWindowProperty("Reconnaissance faciale",WND_PROP_VISIBLE)) break;
         }
-    }
-    cap.release();
-    destroyAllWindows();
-    if (isSuccess) {
-        ui->stackedWidget->setCurrentIndex(2);
-    }
+
+        cap.release();
+        QMetaObject::invokeMethod(this, [this, isSuccess](){
+            destroyAllWindows();
+            if (isSuccess)
+                ui->stackedWidget->setCurrentIndex(2);
+        }, Qt::QueuedConnection);
+    });
 
 }
 
@@ -379,7 +402,7 @@ void MainWindow::on_InscriptionEmploye_clicked()
                 return;
             }
 
-            cv::Mat frame, faces;
+            Mat frame, faces;
             while (cap.read(frame)) {
                 if (frame.empty()) break;
 
@@ -424,7 +447,6 @@ void MainWindow::on_InscriptionEmploye_clicked()
 void MainWindow::loadFaceRegistry() {
     registry.clear();
     QSqlQuery query("SELECT IDEMPLOYE, NOM, FACE_EMBEDDING FROM EMPLOYES");
-
     while (query.next()) {
         QByteArray data = query.value(2).toByteArray();
         if (!data.isEmpty()) {

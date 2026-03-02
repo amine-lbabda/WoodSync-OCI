@@ -11,6 +11,7 @@
 #include <QRandomGenerator64>
 #include <QCryptographicHash>
 #include <vector>
+#include <QSettings>
 using namespace std;
 using namespace cv;
 

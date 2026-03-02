@@ -84,6 +84,12 @@ public:
     void setHash(QString hash){
         this->mdp_hash = hash;
     }
+    int getId(){
+        return id;
+    }
+    void setId(int id) {
+        this->id = id;
+    }
 
     bool ajouter();
     QSqlQueryModel* afficher();
@@ -96,7 +102,7 @@ public:
 
 private:
     QString nom,prenom,role,mdp,mdp_hash;
-    int tel;
+    int tel,id;
     float heures;
     QDate date_recrutement,date_naissance;
 };
