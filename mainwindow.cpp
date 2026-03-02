@@ -156,7 +156,7 @@ void MainWindow::on_BtnLoginFace_clicked()
                 QString matchName = "UNKNOWN";
                 double maxScore = 0.0;
 
-                for (auto it = registry.begin(); it != registry.end(); ++it) {
+                for (vector<FaceTemplate>::iterator it = registry.begin(); it != registry.end(); ++it) {
                     double score = recognizer->match(liveFeature, it->vector);
                     if (score > 0.363 && score > maxScore) {
                         maxScore = score;
