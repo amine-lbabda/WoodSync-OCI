@@ -101,7 +101,7 @@ public:
     bool existanceCompte();
     bool ajoutReconaissanceFaciale(QByteArray data);
     bool exportToCSV(QTableView* view, QString filePath);
-
+    bool importCSV(QTableView* view);
 
 private:
     QString nom,prenom,role,mdp,mdp_hash;

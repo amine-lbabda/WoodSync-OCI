@@ -70,6 +70,8 @@ private slots:
 
     void on_ExportEmploye_clicked();
 
+    void on_ImportEmployes_clicked();
+
 private:
     Ui::MainWindow *ui;
     Employes Etmp;

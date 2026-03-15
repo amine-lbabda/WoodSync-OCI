@@ -1922,6 +1922,31 @@ QPushButton:hover {
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="ImportEmployes">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Importer </string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="SupprimerEmploye">
          <property name="styleSheet">
           <string notr="true">QPushButton {
@@ -1987,6 +2012,56 @@ QPushButton:hover {
          <property name="text">
           <string>Trier</string>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="TriEmploye">
+         <property name="styleSheet">
+          <string notr="true">/* COMBO — clean, simple, lisible */
+QComboBox {
+    background: #ffffff;
+    color: #003366;
+    font-family: &quot;Ubuntu&quot;;
+    font-size: 13px;
+    border: 1px solid #003366;
+    border-radius: 4px;        /* petit arrondi discret */
+    padding: 3px 8px;
+    padding-right: 28px;       /* espace pour la flèche native */
+}
+
+/* garde la flèche native, bouton à droite transparent (pas de bloc moche) */
+QComboBox::drop-down {
+    border: none;
+    background: transparent;
+    width: 22px;
+}
+
+/* liste déroulante */
+QComboBox QAbstractItemView {
+    background: #ffffff;
+    color: #003366;
+    border: 1px solid #003366;
+    selection-background-color: #E5EEF5;
+    selection-color: #003366;
+    outline: none;
+}
+</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Recrutement</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Naissance</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Heures travaillés</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>

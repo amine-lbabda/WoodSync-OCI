@@ -501,3 +501,13 @@ void MainWindow::on_ExportEmploye_clicked()
     }
 }
 
+
+void MainWindow::on_ImportEmployes_clicked()
+{
+    if (Etmp.importCSV(ui->tableView)) {
+        QMessageBox::information(nullptr, tr("Succés"),tr("Votre fichier est importé avec succés !"));
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Votre fichier n'a pas été importé avec succés !"));
+    }
+}
+

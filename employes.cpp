@@ -1,8 +1,10 @@
 #include "employes.h"
 #include "qcryptographichash.h"
+#include "qfiledialog.h"
 #include <QSqlError>
 #include <qtcsv/writer.h>
 #include <qtcsv/stringdata.h>
+#include <qtcsv/reader.h>
 using namespace QtCSV;
 Employes::Employes() {
     this->nom = "";
@@ -72,7 +74,7 @@ bool Employes::modifier(int id)
 {
     QString res = QString::number(id);
     QSqlQuery query;
-    query.prepare("UPDATE EMPLOYÉS SET NOM=?,PRENOM=?,TEL=?,HEURETRAVAILLE=?,DATERECRUTEMENT=?,DATENAISSANCE=?,ROLE=? WHERE IDEMPLOYE=?");
+    query.prepare("UPDATE EMPLOYES SET NOM=?,PRENOM=?,TEL=?,HEURETRAVAILLE=?,DATERECRUTEMENT=?,DATENAISSANCE=?,ROLE=? WHERE IDEMPLOYE=?");
     query.addBindValue(nom);
     query.addBindValue(prenom);
     query.addBindValue(tel);
@@ -93,7 +95,7 @@ bool Employes::supprimer(int id)
 {
     QString res = QString::number(id);
     QSqlQuery query;
-    query.prepare("DELETE FROM EMPLOYÉS WHERE IDEMPLOYE=?");
+    query.prepare("DELETE FROM EMPLOYES WHERE IDEMPLOYE=?");
     query.addBindValue(res);
     if (!query.exec()) {
         qDebug() << "Oracle Error:" << query.lastError().text();
@@ -178,6 +180,44 @@ bool Employes::exportToCSV(QTableView *view,QString filePath)
         data.addRow(rowData);
     }
     if (Writer::write(filePath,data)) {
+        return true;
+    }
+    return false;
+}
+
+bool Employes::importCSV(QTableView *view)
+{
+    QString filePath = QFileDialog::getOpenFileName(nullptr,"Import employee data",QDir::homePath(),"CSV Files (*.csv)");
+    if (filePath.isEmpty()) return false;
+    QList<QStringList> readData = Reader::readToList(filePath);
+    if (readData.isEmpty()) {
+        return false;
+    }
+    int importedCount = 0;
+    for (int i= 1;i< readData.size();++i) {
+        QStringList row = readData.at(i);
+        if (row.size() >= 8) {
+            QString nom = row.at(1).trimmed();
+            QString prenom = row.at(2).trimmed();
+            int tel = row.at(3).isEmpty() ? 0: row.at(3).toInt();
+            float heures = row.at(4).isEmpty() ? 0: row.at(4).toFloat();
+            QDate dateRecrutement = QDate::fromString(row.at(5),"dd/MM/yyyy");
+            QDate dateNaissance = QDate::fromString(row.at(6).trimmed(),"dd/MM/yyyy");
+            QString role = row.at(7).trimmed();
+            setNom(nom);
+            setPrenom(prenom);
+            setTel(tel);
+            setHeures(heures);
+            setDate_recrutement(dateRecrutement);
+            setDate_naissance(dateNaissance);
+            setRole(role);
+            if (ajouter()) {
+                importedCount++;
+            }
+        }
+    }
+    if (importedCount > 0) {
+        view->setModel(afficher());
         return true;
     }
     return false;
