@@ -6398,6 +6398,46 @@ QPushButton::checked {
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="DeconnecterUtilisateur">
+        <property name="font">
+         <font>
+          <family>Roboto Condensed</family>
+          <pointsize>-1</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+ }
+QPushButton::checked {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+}</string>
+        </property>
+        <property name="text">
+         <string>Se déconnecter</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QLabel" name="label">

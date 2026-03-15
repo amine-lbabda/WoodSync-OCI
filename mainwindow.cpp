@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(job,&ReadPasswordJob::finished,this,&MainWindow::onTokenRead);
     job->start();
     ui->tableView->setModel(Etmp.afficher());
-    ui->stackedWidget->setCurrentIndex(1);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setSectionResizeMode(4,QHeaderView::ResizeToContents);
@@ -40,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
     for (QList<QDateEdit*>::Iterator it=allDates.begin();it != allDates.end();++it) {
         (*it)->setCalendarPopup(true);
         setupCalendar((*it)->calendarWidget());
+    }
+    if (currentId == -1) {
+        ui->DeconnecterUtilisateur->setVisible(true);
+    } else {
+        ui->DeconnecterUtilisateur->setVisible(false);
     }
 }
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
@@ -484,6 +488,7 @@ void MainWindow::loadFaceRegistry() {
 
 void MainWindow::populateComboBox()
 {
+    ui->SuperviseurEmploye->clear();
     ui->SuperviseurEmploye->addItem("Séléctionnez quelqu'un",-1);
     QSqlQuery query;
     query.prepare("SELECT IDEMPLOYE,NOM,PRENOM FROM EMPLOYES");
@@ -554,5 +559,21 @@ void MainWindow::on_ImportEmployes_clicked()
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Votre fichier n'a pas été importé avec succés !"));
     }
+}
+
+
+void MainWindow::on_DeconnecterUtilisateur_clicked()
+{
+    Etmp.clearSessionToken(currentId);
+    DeletePasswordJob* job = new DeletePasswordJob("WoodSync",this);
+    job->setKey("session_token");
+    job->start();
+    QSettings s("WoodSync","WoodSyncApp");
+    s.remove("userId");
+    currentId = -1;
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->NomLoginMenuisier->setText("");
+    ui->PrenomLoginMenuisier->setText("");
+    ui->MdpLoginMenuisier->setText("");
 }
 

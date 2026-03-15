@@ -73,6 +73,10 @@ private slots:
 
     void on_ImportEmployes_clicked();
 
+    void onTokenRead(Job* job);
+
+    void on_DeconnecterUtilisateur_clicked();
+
 private:
     Ui::MainWindow *ui;
     Employes Etmp;
@@ -86,6 +90,5 @@ private:
     void populateComboBox();
     void persistSessionUser(int userId);
     int currentId = -1;
-    void onTokenRead(Job* job);
 };
 #endif // MAINWINDOW_H
