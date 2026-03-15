@@ -12,6 +12,7 @@
 #include <QCryptographicHash>
 #include <vector>
 #include <QSettings>
+#include <QFileDialog>
 using namespace std;
 using namespace cv;
 
@@ -66,6 +67,8 @@ private slots:
     void on_tableView_doubleClicked(const QModelIndex &index);
 
     void on_InscriptionEmploye_clicked();
+
+    void on_ExportEmploye_clicked();
 
 private:
     Ui::MainWindow *ui;

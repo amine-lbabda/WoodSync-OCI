@@ -7,7 +7,9 @@
 #include <QDate>
 #include <QTableView>
 #include <opencv2/opencv.hpp>
+#include <QFile>
 using namespace cv;
+using namespace std;
 struct FaceTemplate {
     int id;
     QString name;
@@ -98,6 +100,7 @@ public:
     bool ajoutCompte();
     bool existanceCompte();
     bool ajoutReconaissanceFaciale(QByteArray data);
+    bool exportToCSV(QTableView* view, QString filePath);
 
 
 private:

@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     loadFaceRegistry();
-    std::ignore = QtConcurrent::run([this](){
+    ignore = QtConcurrent::run([this](){
         detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
         recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
     });
@@ -135,7 +135,7 @@ void MainWindow::on_BtnLogin_clicked()
 
 void MainWindow::on_BtnLoginFace_clicked()
 {
-    std::ignore = QtConcurrent::run([this](){
+    ignore = QtConcurrent::run([this](){
         cap.open(0);
         if (!cap.isOpened()) return;
         Mat frame, faces;
@@ -203,11 +203,6 @@ void MainWindow::on_BtnLoginFace_clicked()
     });
 
 }
-
-
-//void MainWindow::handleFrame(Mat frame)
-//{
-//}
 void MainWindow::on_ConnectionLink_linkActivated(const QString &link)
 {
     if (link == "loginPage") {
@@ -401,7 +396,8 @@ void MainWindow::on_InscriptionEmploye_clicked()
                 qDebug() << "Could not open camera!";
                 return;
             }
-
+            const string WINNAME="Enregistrement biométrique WoodSync";
+            namedWindow(WINNAME,WINDOW_AUTOSIZE);
             Mat frame, faces;
             while (cap.read(frame)) {
                 if (frame.empty()) break;
@@ -413,8 +409,8 @@ void MainWindow::on_InscriptionEmploye_clicked()
                     float *f = faces.ptr<float>(0);
                     Rect faceRect(f[0],f[1],f[2],f[3]);
                     rectangle(frame,faceRect,Scalar(255,255,0),2);
-                    putText(frame,"Appuyez sur s pour sauvgarder votre image !",Point(10,30),FONT_HERSHEY_COMPLEX,0.7,Scalar(255,255,0),2);
-                    imshow("Enregistrement biométrique WoodSync",frame);
+                    displayOverlay(WINNAME,"Appuyez sur S pour sauvgarder votre image !",2000);
+                    imshow(WINNAME,frame);
                     int key = waitKey(1);
                     if (key == 's' || key == 'S'){
                         if (faces.rows == 1) {
@@ -435,7 +431,8 @@ void MainWindow::on_InscriptionEmploye_clicked()
                 }
             }
             cap.release();
-            cv::destroyAllWindows();
+            destroyWindow(WINNAME);
+            ui->stackedWidget->setCurrentIndex(2);
         } else {
             ui->stackedWidget->setCurrentIndex(2);
         }
@@ -488,4 +485,19 @@ void MainWindow::loadFaceRegistry() {
     }
 }
  */
+
+
+void MainWindow::on_ExportEmploye_clicked()
+{
+    QString filter = "CSV Files (*.csv)";
+    QString filePath = QFileDialog::getSaveFileName(this,"Export Employee Data",QDir::homePath() + "/employees.csv",filter);
+    if (filePath.isEmpty()) {
+        return;
+    }
+    if (Etmp.exportToCSV(ui->tableView,filePath)) {
+        QMessageBox::information(nullptr, "Export Success", "Data saved to: " + filePath);
+    } else {
+        QMessageBox::critical(nullptr, "Export Failed", "Could not save the file.");
+    }
+}
 

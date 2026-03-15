@@ -41,3 +41,8 @@ DISTFILES += \
     face_detection_yunet_2023mar.onnx \
     face_model.xml \
     face_recognition_sface_2021dec.onnx
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lqtcsv
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include/qtcsv
+DEPENDPATH += $$PWD/../../../../usr/local/include/qtcsv

@@ -1,6 +1,9 @@
 #include "employes.h"
 #include "qcryptographichash.h"
 #include <QSqlError>
+#include <qtcsv/writer.h>
+#include <qtcsv/stringdata.h>
+using namespace QtCSV;
 Employes::Employes() {
     this->nom = "";
     this->prenom = "";
@@ -156,5 +159,27 @@ bool Employes::ajoutReconaissanceFaciale(QByteArray data)
         qDebug() << "Employee added successfully!";
         return true;
     }
+}
+
+bool Employes::exportToCSV(QTableView *view,QString filePath)
+{
+    StringData data;
+    QAbstractItemModel* model = view->model();
+    QStringList headers;
+    for (int i = 0;i < model->columnCount();++i) {
+        headers.push_back(model->headerData(i,Qt::Horizontal).toString());
+    }
+    data.addRow(headers);
+    for (int row = 0;row < model->rowCount();++row) {
+        QStringList rowData;
+        for (int col=0;col < model->columnCount();++col) {
+            rowData.push_back(model->data(model->index(row,col)).toString());
+        }
+        data.addRow(rowData);
+    }
+    if (Writer::write(filePath,data)) {
+        return true;
+    }
+    return false;
 }
 
