@@ -2,10 +2,6 @@
 #include "qcryptographichash.h"
 #include "qfiledialog.h"
 #include <QSqlError>
-#include <qtcsv/writer.h>
-#include <qtcsv/stringdata.h>
-#include <qtcsv/reader.h>
-using namespace QtCSV;
 Employes::Employes() {
     this->nom = "";
     this->prenom = "";
@@ -16,9 +12,10 @@ Employes::Employes() {
     this->date_naissance = QDate::currentDate();
     this->mdp="";
     this->mdp_hash="";
+    this->id_supervised=-1;
 }
 
-Employes::Employes(QString nom, QString prenom, int tel, float heures, QDate date_recrutement, QDate date_naissance, QString role, QString mdp, QString mdp_hash)
+Employes::Employes(QString nom, QString prenom, int tel, float heures, QDate date_recrutement, QDate date_naissance, QString role, QString mdp, QString mdp_hash, int id_supervised)
 {
     this->nom = nom;
     this->prenom = prenom;
@@ -29,20 +26,36 @@ Employes::Employes(QString nom, QString prenom, int tel, float heures, QDate dat
     this->role = role;
     this->mdp = mdp;
     this->mdp_hash = mdp_hash;
+    this->id_supervised = id_supervised;
 
 }
 
 bool Employes::ajouter()
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO EMPLOYES (NOM,PRENOM,TEL,HEURETRAVAILLE,DATERECRUTEMENT,DATENAISSANCE,ROLE) VALUES(?,?,?,?,?,?,?)");
-    query.addBindValue(nom);
-    query.addBindValue(prenom);
-    query.addBindValue(tel);
-    query.addBindValue(heures);
-    query.addBindValue(date_recrutement);
-    query.addBindValue(date_naissance);
-    query.addBindValue(role);
+    if (id_supervised == 0) {
+        query.prepare("INSERT INTO EMPLOYES (NOM,PRENOM,TEL,HEURETRAVAILLE,DATERECRUTEMENT,DATENAISSANCE,ROLE) VALUES(?,?,?,?,?,?,?)");
+        query.addBindValue(nom);
+        query.addBindValue(prenom);
+        query.addBindValue(tel);
+        query.addBindValue(heures);
+        query.addBindValue(date_recrutement);
+        query.addBindValue(date_naissance);
+        query.addBindValue(role);
+    } else {
+            query.prepare("INSERT INTO EMPLOYES (NOM,PRENOM,TEL,HEURETRAVAILLE,DATERECRUTEMENT,DATENAISSANCE,ROLE,IDSUPERVISEUR) VALUES(?,?,?,?,?,?,?,?)");
+        query.addBindValue(nom);
+        query.addBindValue(prenom);
+        query.addBindValue(tel);
+        query.addBindValue(heures);
+        query.addBindValue(date_recrutement);
+        query.addBindValue(date_naissance);
+        query.addBindValue(role);
+        query.addBindValue(id_supervised);
+    }
+
+
+
     if (!query.exec()) {
         qDebug() << "Oracle Error:" << query.lastError().text();
         return false;
@@ -107,8 +120,12 @@ bool Employes::supprimer(int id)
 
 bool Employes::ajoutCompte()
 {
-    QSqlQuery query;
-    query.prepare("INSERT INTO EMPLOYES (NOM,PRENOM,MDP,MDP_SALT,ROLE) VALUES(?,?,?,?,?)");
+    QSqlQuery query,seqQuery;
+    seqQuery.exec("SELECT EMPLOYES_SEQ.NEXTVAL FROM DUAL");
+    if (!seqQuery.next()) return false;
+    id = seqQuery.value(0).toInt();
+    query.prepare("INSERT INTO EMPLOYES (IDEMPLOYE,NOM,PRENOM,MDP,MDP_SALT,ROLE) VALUES(?,?,?,?,?,?)");
+    query.addBindValue(id);
     query.addBindValue(nom);
     query.addBindValue(prenom);
     query.addBindValue(mdp);
@@ -126,7 +143,7 @@ bool Employes::ajoutCompte()
 bool Employes::existanceCompte()
 {
     QSqlQuery query;
-    query.prepare("SELECT MDP,MDP_SALT FROM EMPLOYES WHERE NOM=? AND PRENOM=?");
+    query.prepare("SELECT MDP,MDP_SALT,IDEMPLOYE FROM EMPLOYES WHERE NOM=? AND PRENOM=?");
     query.addBindValue(nom);
     query.addBindValue(prenom);
     if (!query.exec()) {
@@ -138,7 +155,10 @@ bool Employes::existanceCompte()
             QString storedSalt = query.value(1).toString();
             QByteArray verifyBytes = QCryptographicHash::hash((mdp+storedSalt).toUtf8(),QCryptographicHash::Sha512);
             QString verifyHex = verifyBytes.toHex();
-            return verifyHex == storedHash;
+            if (verifyHex == storedHash) {
+                id = query.value(2).toInt();
+                return true;
+            }
         }
     }
     return false;
@@ -201,7 +221,7 @@ bool Employes::importCSV(QTableView *view)
             QString prenom = row.at(2).trimmed();
             int tel = row.at(3).isEmpty() ? 0: row.at(3).toInt();
             float heures = row.at(4).isEmpty() ? 0: row.at(4).toFloat();
-            QDate dateRecrutement = QDate::fromString(row.at(5),"dd/MM/yyyy");
+            QDate dateRecrutement = QDate::fromString(row.at(5).trimmed(),"dd/MM/yyyy");
             QDate dateNaissance = QDate::fromString(row.at(6).trimmed(),"dd/MM/yyyy");
             QString role = row.at(7).trimmed();
             setNom(nom);
@@ -221,5 +241,50 @@ bool Employes::importCSV(QTableView *view)
         return true;
     }
     return false;
+}
+
+bool Employes::saveSessionToken(const QString &token, const QDate &expiry,int userId)
+{
+    QSqlQuery query;
+    query.prepare("UPDATE EMPLOYES SET SESSION_TOKEN=?,TOKEN_EXPIRY=? WHERE IDEMPLOYE=?");
+    query.addBindValue(token);
+    query.addBindValue(expiry);
+    query.addBindValue(userId);
+    if (!query.exec()) {
+        qDebug() << "Oracle Error:" << query.lastError().text();
+        return false;
+    } else {
+        qDebug() << "Employee added successfully!";
+        return true;
+    }
+}
+
+bool Employes::validateSessionToken(const QString &token, int id)
+{
+    QSqlQuery query;
+    query.prepare("SELECT * FROM EMPLOYES WHERE IDEMPLOYE=? AND SESSION_TOKEN=? AND TOKEN_EXPIRY>=TRUNC(SYSDATE)");
+    query.addBindValue(id);
+    query.addBindValue(token);
+    if (!query.exec()) {
+        qDebug() << "Oracle Error:" << query.lastError().text();
+        return false;
+    } else {
+        qDebug() << "Employee added successfully!";
+        return query.next();
+    }
+}
+
+bool Employes::clearSessionToken(int id)
+{
+    QSqlQuery query;
+    query.prepare("UPDATE EMPLOYES SET SESSION_TOKEN=NULL,TOKEN_EXPIRY=NULL WHERE IDEMPLOYE=?");
+    query.addBindValue(id);
+    if (!query.exec()) {
+        qDebug() << "Oracle Error:" << query.lastError().text();
+        return false;
+    } else {
+        qDebug() << "Employee added successfully!";
+        return true;
+    }
 }
 

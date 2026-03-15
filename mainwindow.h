@@ -13,9 +13,10 @@
 #include <vector>
 #include <QSettings>
 #include <QFileDialog>
+#include <qt6keychain/keychain.h>
 using namespace std;
 using namespace cv;
-
+using namespace QKeychain;
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -82,5 +83,9 @@ private:
     void loadFaceRegistry();
     QString detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
     QString recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
+    void populateComboBox();
+    void persistSessionUser(int userId);
+    int currentId = -1;
+    void onTokenRead(Job* job);
 };
 #endif // MAINWINDOW_H

@@ -4,6 +4,7 @@
 #include <QThread>
 #include "employes.h"
 #include <QFile>
+#include <QUuid>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -14,6 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
         recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", dnn::DNN_BACKEND_CUDA, dnn::DNN_TARGET_CUDA);
     });
     ui->setupUi(this);
+    populateComboBox();
+    ReadPasswordJob* job = new ReadPasswordJob("WoodSync",this);
+    job->setKey("session_token");
+    connect(job,&ReadPasswordJob::finished,this,&MainWindow::onTokenRead);
+    job->start();
     ui->tableView->setModel(Etmp.afficher());
     ui->stackedWidget->setCurrentIndex(1);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -126,9 +132,12 @@ void MainWindow::on_BtnLogin_clicked()
     e.setPrenom(prenom);
     e.setMdp(mdp);
     if (e.existanceCompte()) {
+        currentId = e.getId();
+        persistSessionUser(currentId);
         ui->stackedWidget->setCurrentIndex(2);
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Vérifier votre mdp !"));
+        return;
     }
 
 }
@@ -221,6 +230,7 @@ void MainWindow::on_ConnectionLink_2_linkActivated(const QString &link)
 
 void MainWindow::on_AjoutEmploye_clicked()
 {
+    QString id = ui->SuperviseurEmploye->currentData().toString();
     QString nom = ui->nomEmploye->text();
     QString prenom = ui->PrenomEmploye->text();
     QDate date_naissance = ui->DateNaissance->date();
@@ -229,6 +239,15 @@ void MainWindow::on_AjoutEmploye_clicked()
     int tel = ui->TelEmploye->text().toInt();
     QString role = ui->RoleEmploye->currentText();
     Employes e(nom,prenom,tel,heures,date_recrutement,date_naissance,role);
+    QVariant idSupervised;
+    if (id.toInt() == -1) {
+        idSupervised = QVariant(QMetaType(QMetaType::Int));
+    } else {
+        idSupervised = id.toInt();
+    }
+    if (!id.isEmpty()) {
+        e.setIdSupervised(idSupervised.toInt());
+    }
     if (ui->AjoutEmploye->text() == "Ajouter") {
         if (nom.isEmpty() || prenom.isEmpty() || date_naissance.isNull() || date_recrutement.isNull()){
             QMessageBox msg(QMessageBox::Critical,
@@ -256,6 +275,7 @@ void MainWindow::on_AjoutEmploye_clicked()
             ui->PrenomEmploye->setText("");
             ui->HeuresTravailleEmploye->setValue(0.0);
             ui->TelEmploye->setText("");
+            populateComboBox();
         } else {
             QMessageBox msg(QMessageBox::Critical,
                             tr("Erreur"),
@@ -387,6 +407,8 @@ void MainWindow::on_InscriptionEmploye_clicked()
     Employes e(nom,prenom,0,0,QDate::currentDate(),dateNaissance,"Menuisier",mdp,mdp_salt);
 
     if (e.ajoutCompte()){
+        currentId = e.getId();
+        persistSessionUser(currentId);
         QMessageBox::information(nullptr,tr("Succées"),tr("Votre compte a été crée avec succés"));
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(nullptr,tr("Reconaissance faciale"),tr("Voulez-vous configurer votre reconnaissance faciale?"),QMessageBox::Yes | QMessageBox::No);
@@ -460,31 +482,54 @@ void MainWindow::loadFaceRegistry() {
     }
 }
 
-/*
- * void MainWindow::loadFaceRegistry() {
-    registry.clear();
-    QSqlQuery query("SELECT IDEMPLOYE, NOM, FACE_EMBEDDING FROM EMPLOYES");
-
-    while (query.next()) {
-        QByteArray data = query.value(2).toByteArray();
-        if (!data.isEmpty()) {
-            FaceTemplate ft;
-            ft.id = query.value(0).toInt();
-            ft.name = query.value(1).toString();
-
-            // DO NOT point to data.data() directly.
-            // Copy the bytes into a temporary vector first to ensure alignment
-            std::vector<float> buffer(data.size() / sizeof(float));
-            memcpy(buffer.data(), data.constData(), data.size());
-
-            // Create the Mat from the safe buffer and CLONE it
-            ft.vector = cv::Mat(buffer).clone();
-
-            registry.push_back(ft);
+void MainWindow::populateComboBox()
+{
+    ui->SuperviseurEmploye->addItem("Séléctionnez quelqu'un",-1);
+    QSqlQuery query;
+    query.prepare("SELECT IDEMPLOYE,NOM,PRENOM FROM EMPLOYES");
+    if(query.exec()){
+        while (query.next()) {
+            QString id = query.value(0).toString();
+            QString fullDisplayName = query.value(1).toString() + " " + query.value(2).toString();
+            ui->SuperviseurEmploye->addItem(fullDisplayName,id);
         }
     }
+
 }
- */
+
+void MainWindow::persistSessionUser(int userId)
+{
+    QString token = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    Etmp.saveSessionToken(token,QDate::currentDate().addDays(30),userId);
+    WritePasswordJob* job = new WritePasswordJob("WoodSync",this);
+    job->setKey("session_token");
+    job->setTextData(token);
+    job->start();
+    QSettings s("WoodSync","WoodSyncApp");
+    s.setValue("userId",userId);
+}
+
+void MainWindow::onTokenRead(Job *job)
+{
+    ReadPasswordJob* readJob = static_cast<ReadPasswordJob*>(job);
+    QSettings s("WoodSync","WoodSyncApp");
+    int savedId = s.value("userId",-1).toInt();
+    if (readJob->error() || readJob->textData().isEmpty() || savedId == -1) {
+        ui->stackedWidget->setCurrentIndex(0);
+        return;
+    }
+    QString token = readJob->textData();
+    if (Etmp.validateSessionToken(token,savedId)) {
+        currentId =savedId;
+        ui->stackedWidget->setCurrentIndex(2);
+    } else {
+        s.remove("userId");
+        DeletePasswordJob* del = new DeletePasswordJob("WoodSync",this);
+        del->setKey("session_token");
+        del->start();
+        ui->stackedWidget->setCurrentIndex(0);
+    }
+}
 
 
 void MainWindow::on_ExportEmploye_clicked()

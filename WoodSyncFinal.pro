@@ -46,3 +46,5 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lqtcsv
 
 INCLUDEPATH += $$PWD/../../../../usr/local/include/qtcsv
 DEPENDPATH += $$PWD/../../../../usr/local/include/qtcsv
+INCLUDEPATH += /home/amine/Qt/6.7.3/gcc_64/include/qt6keychain
+LIBS += -L/home/amine/Qt/6.7.3/gcc_64/lib -lqt6keychain

@@ -8,6 +8,10 @@
 #include <QTableView>
 #include <opencv2/opencv.hpp>
 #include <QFile>
+#include <qtcsv/writer.h>
+#include <qtcsv/stringdata.h>
+#include <qtcsv/reader.h>
+using namespace QtCSV;
 using namespace cv;
 using namespace std;
 struct FaceTemplate {
@@ -28,7 +32,8 @@ public:
              ,QDate date_naissance=QDate::currentDate()
              ,QString role="",
              QString mdp="",
-             QString mdp_hash="");
+             QString mdp_hash="",
+             int id_supervised=0);
     QString getNom(){
         return this->nom;
     }
@@ -92,6 +97,12 @@ public:
     void setId(int id) {
         this->id = id;
     }
+    int getIdSupervised(){
+        return this->id_supervised;
+    }
+    void setIdSupervised(int id_supervised) {
+        this->id_supervised = id_supervised;
+    }
 
     bool ajouter();
     QSqlQueryModel* afficher();
@@ -102,10 +113,13 @@ public:
     bool ajoutReconaissanceFaciale(QByteArray data);
     bool exportToCSV(QTableView* view, QString filePath);
     bool importCSV(QTableView* view);
+    bool saveSessionToken(const QString& token,const QDate& expiry,int userId);
+    bool validateSessionToken(const QString& token,int id);
+    bool clearSessionToken(int id);
 
 private:
     QString nom,prenom,role,mdp,mdp_hash;
-    int tel,id;
+    int tel,id,id_supervised;
     float heures;
     QDate date_recrutement,date_naissance;
 };
