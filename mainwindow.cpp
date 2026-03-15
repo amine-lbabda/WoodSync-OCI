@@ -40,11 +40,9 @@ MainWindow::MainWindow(QWidget *parent)
         (*it)->setCalendarPopup(true);
         setupCalendar((*it)->calendarWidget());
     }
-    if (currentId == -1) {
-        ui->DeconnecterUtilisateur->setVisible(true);
-    } else {
-        ui->DeconnecterUtilisateur->setVisible(false);
-    }
+    ui->DeconnecterUtilisateur->setVisible(false);
+    ui->SideBar->setVisible(false);
+
 }
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     if (!calendar) return;
@@ -138,6 +136,8 @@ void MainWindow::on_BtnLogin_clicked()
     if (e.existanceCompte()) {
         currentId = e.getId();
         persistSessionUser(currentId);
+        ui->DeconnecterUtilisateur->setVisible(true);
+        ui->SideBar->setVisible(true);
         ui->stackedWidget->setCurrentIndex(2);
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Vérifier votre mdp !"));
@@ -413,6 +413,7 @@ void MainWindow::on_InscriptionEmploye_clicked()
     if (e.ajoutCompte()){
         currentId = e.getId();
         persistSessionUser(currentId);
+        ui->DeconnecterUtilisateur->setVisible(true);
         QMessageBox::information(nullptr,tr("Succées"),tr("Votre compte a été crée avec succés"));
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(nullptr,tr("Reconaissance faciale"),tr("Voulez-vous configurer votre reconnaissance faciale?"),QMessageBox::Yes | QMessageBox::No);
@@ -526,12 +527,14 @@ void MainWindow::onTokenRead(Job *job)
     QString token = readJob->textData();
     if (Etmp.validateSessionToken(token,savedId)) {
         currentId =savedId;
+        ui->DeconnecterUtilisateur->setVisible(true);
         ui->stackedWidget->setCurrentIndex(2);
     } else {
         s.remove("userId");
         DeletePasswordJob* del = new DeletePasswordJob("WoodSync",this);
         del->setKey("session_token");
         del->start();
+        ui->DeconnecterUtilisateur->setVisible(false);
         ui->stackedWidget->setCurrentIndex(0);
     }
 }
@@ -571,6 +574,8 @@ void MainWindow::on_DeconnecterUtilisateur_clicked()
     QSettings s("WoodSync","WoodSyncApp");
     s.remove("userId");
     currentId = -1;
+    ui->DeconnecterUtilisateur->setVisible(false);
+    ui->SideBar->setVisible(false);
     ui->stackedWidget->setCurrentIndex(0);
     ui->NomLoginMenuisier->setText("");
     ui->PrenomLoginMenuisier->setText("");
