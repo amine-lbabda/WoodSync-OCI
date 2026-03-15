@@ -40,9 +40,9 @@ MainWindow::MainWindow(QWidget *parent)
         (*it)->setCalendarPopup(true);
         setupCalendar((*it)->calendarWidget());
     }
-    ui->DeconnecterUtilisateur->setVisible(false);
-    ui->SideBar->setVisible(false);
-
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->DeconnecterUtilisateur->hide();
+    ui->SideBar->hide();
 }
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     if (!calendar) return;
@@ -210,8 +210,11 @@ void MainWindow::on_BtnLoginFace_clicked()
         cap.release();
         QMetaObject::invokeMethod(this, [this, isSuccess](){
             destroyAllWindows();
-            if (isSuccess)
+            if (isSuccess) {
                 ui->stackedWidget->setCurrentIndex(2);
+                ui->SideBar->setVisible(true);
+            }
+
         }, Qt::QueuedConnection);
     });
 
@@ -459,10 +462,9 @@ void MainWindow::on_InscriptionEmploye_clicked()
             }
             cap.release();
             destroyWindow(WINNAME);
-            ui->stackedWidget->setCurrentIndex(2);
-        } else {
-            ui->stackedWidget->setCurrentIndex(2);
         }
+        ui->stackedWidget->setCurrentIndex(2);
+        ui->SideBar->setVisible(true);
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Erreur lors du traitement du votre requête !"));
     }
@@ -528,6 +530,7 @@ void MainWindow::onTokenRead(Job *job)
     if (Etmp.validateSessionToken(token,savedId)) {
         currentId =savedId;
         ui->DeconnecterUtilisateur->setVisible(true);
+        ui->SideBar->setVisible(true);
         ui->stackedWidget->setCurrentIndex(2);
     } else {
         s.remove("userId");
