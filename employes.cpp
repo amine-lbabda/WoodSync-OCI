@@ -65,13 +65,68 @@ bool Employes::ajouter()
     }
 }
 
-QSqlQueryModel *Employes::afficher()
+QSqlQueryModel *Employes::afficher(int currentId)
 {
+    QSqlQuery query;
+    query.prepare("SELECT IDEMPLOYE,NOM, PRENOM, TO_CHAR(TEL,'99999999999999'), HEURETRAVAILLE, TO_CHAR(DATERECRUTEMENT,'DD/MM/YYYY'), TO_CHAR(DATENAISSANCE,'DD/MM/YYYY'),ROLE FROM EMPLOYES WHERE IDEMPLOYE <> :id");
+    query.bindValue(":id",currentId);
+
+    if (!query.exec()) {
+        qDebug() << "Oracle Error (afficher):" << query.lastError().text() << "ownerId=" << currentId;
+        return nullptr;
+    }
+
     QSqlQueryModel* model = new QSqlQueryModel();
-    model->setQuery("SELECT IDEMPLOYE,NOM, PRENOM, TO_CHAR(TEL,'99999999999999'), HEURETRAVAILLE, TO_CHAR(DATERECRUTEMENT,'DD/MM/YYYY'), TO_CHAR(DATENAISSANCE,'DD/MM/YYYY'),ROLE FROM EMPLOYES");
+    model->setQuery(std::move(query));
     if (model->lastError().isValid()) {
         qDebug() << "Error: " << model->lastError().text();
     }
+    model->setHeaderData(0,Qt::Horizontal,QObject::tr("ID"));
+    model->setHeaderData(1,Qt::Horizontal,QObject::tr("Nom"));
+    model->setHeaderData(2,Qt::Horizontal,QObject::tr("Prénom"));
+    model->setHeaderData(3,Qt::Horizontal,QObject::tr("Tel"));
+    model->setHeaderData(4,Qt::Horizontal,QObject::tr("Heures travaillés"));
+    model->setHeaderData(5,Qt::Horizontal,QObject::tr("Date recrutement"));
+    model->setHeaderData(6,Qt::Horizontal,QObject::tr("Date naissance"));
+    model->setHeaderData(7,Qt::Horizontal,QObject::tr("Rôle"));
+    return model;
+}
+
+QSqlQueryModel *Employes::rechercher(QString nom)
+{
+    const QString searchText = nom.trimmed();
+    const QString pattern = "%" + searchText + "%";
+    QSqlQuery query;
+    query.prepare("SELECT IDEMPLOYE, NOM, PRENOM, TO_CHAR(TEL,'99999999999999'), "
+                  "HEURETRAVAILLE, TO_CHAR(DATERECRUTEMENT,'DD/MM/YYYY'), "
+                  "TO_CHAR(DATENAISSANCE,'DD/MM/YYYY'), ROLE "
+                  "FROM EMPLOYES "
+                  "WHERE UPPER(TRIM(NOM)) LIKE UPPER(:termNom) "
+                  "OR UPPER(TRIM(PRENOM)) LIKE UPPER(:termPrenom) "
+                  "OR UPPER(TRIM(NOM || ' ' || PRENOM)) LIKE UPPER(:termFull) "
+                  "OR TO_CHAR(IDEMPLOYE) LIKE :termId");
+    query.bindValue(":termNom", pattern);
+    query.bindValue(":termPrenom", pattern);
+    query.bindValue(":termFull", pattern);
+    query.bindValue(":termId", pattern);
+    if (!query.exec()) {
+        qDebug() << "Oracle error (rechercher):" << query.lastError().text() << "search=" << searchText;
+        return nullptr;
+    }
+
+    QSqlQueryModel* model = new QSqlQueryModel();
+    model->setQuery(std::move(query));
+    if (model->lastError().isValid()) {
+        qDebug() << "Model error (rechercher):" << model->lastError().text();
+        delete model;
+        return nullptr;
+    }
+
+    while (model->canFetchMore()) {
+        model->fetchMore();
+    }
+    qDebug() << "rechercher() term=" << searchText << "rows=" << model->rowCount() << "cols=" << model->columnCount();
+
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("ID"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Nom"));
     model->setHeaderData(2,Qt::Horizontal,QObject::tr("Prénom"));
@@ -237,7 +292,7 @@ bool Employes::importCSV(QTableView *view)
         }
     }
     if (importedCount > 0) {
-        view->setModel(afficher());
+        view->setModel(afficher(id));
         return true;
     }
     return false;
@@ -269,7 +324,7 @@ bool Employes::validateSessionToken(const QString &token, int id)
         qDebug() << "Oracle Error:" << query.lastError().text();
         return false;
     } else {
-        qDebug() << "Employee added successfully!";
+        qDebug() << "Done !";
         return query.next();
     }
 }

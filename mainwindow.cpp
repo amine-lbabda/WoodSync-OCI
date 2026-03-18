@@ -20,15 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
     job->setKey("session_token");
     connect(job,&ReadPasswordJob::finished,this,&MainWindow::onTokenRead);
     job->start();
-    ui->tableView->setModel(Etmp.afficher());
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(4,QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(5,QHeaderView::ResizeToContents);
-    ui->tableView->verticalHeader()->setVisible(false);
-    ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->DateNaissance->setDate(QDate::currentDate());
     ui->DateRecrutementEmploye->setDate(QDate::currentDate());
     QList<QPushButton*> allButtons = this->findChildren<QPushButton*>();
@@ -42,8 +33,59 @@ MainWindow::MainWindow(QWidget *parent)
     }
     ui->stackedWidget->setCurrentIndex(0);
     ui->DeconnecterUtilisateur->hide();
-    ui->SideBar->hide();
+    ui->FrameAjout->hide();
+    ui->tableView->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    configureTableViews();
 }
+
+void MainWindow::configureTableViews()
+{
+    if (ui->tableWidget_3 && ui->tableWidget_3->horizontalHeader()) {
+        ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    }
+    if (ui->tableWidget_2 && ui->tableWidget_2->horizontalHeader()) {
+        ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    }
+    if (ui->tableview && ui->tableview->horizontalHeader()) {
+        ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    }
+}
+
+void MainWindow::bindEmployeeTableModel(QSqlQueryModel *model)
+{
+    if (!ui->tableView) return;
+
+    if (!model) {
+        ui->tableView->setModel(nullptr);
+        return;
+    }
+
+    while (model->canFetchMore()) {
+        model->fetchMore();
+    }
+    qDebug() << "bindEmployeeTableModel() rows=" << model->rowCount() << "cols=" << model->columnCount();
+
+    ui->tableView->setModel(model);
+    if (QHeaderView* header = ui->tableView->horizontalHeader()) {
+        header->setSectionResizeMode(QHeaderView::Stretch);
+        header->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+        header->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+        header->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    }
+    if (QHeaderView* vertical = ui->tableView->verticalHeader()) {
+        vertical->setVisible(false);
+    }
+
+}
+
+bool MainWindow::refreshEmployeeTable()
+{
+    QSqlQueryModel* model = Etmp.afficher(currentId);
+    if (!model) return false;
+    bindEmployeeTableModel(model);
+    return true;
+}
+
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     if (!calendar) return;
 
@@ -61,7 +103,9 @@ void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     calendar->setPalette(pal);
 
     // 2. Force the internal view to follow the palette
-    calendar->findChild<QAbstractItemView*>()->setPalette(pal);
+    if (QAbstractItemView* view = calendar->findChild<QAbstractItemView*>()) {
+        view->setPalette(pal);
+    }
 
     // 3. One very specific CSS line to kill the global Dark Theme
     calendar->setStyleSheet("background-color: white; color: black; border: 1px solid #ccc;");
@@ -78,37 +122,66 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_GestionStock_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(2);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(2);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
+
 }
 
 
 void MainWindow::on_GestionReclamations_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(5);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(5);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
 }
 
 
 void MainWindow::on_GestionEmployes_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(3);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(3);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
+
 }
 
 
 void MainWindow::on_GestionProduits_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(4);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(4);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
+
 }
 
 
 void MainWindow::on_GestionMateriels_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(6);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(6);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
+
 }
 
 
 void MainWindow::on_GestionCommandes_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(3);
+    if (currentId != -1) {
+        ui->stackedWidget->setCurrentIndex(5);
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Vous n'êtes pas autorisé !"));
+    }
+
 }
 
 
@@ -138,7 +211,7 @@ void MainWindow::on_BtnLogin_clicked()
         persistSessionUser(currentId);
         ui->DeconnecterUtilisateur->setVisible(true);
         ui->SideBar->setVisible(true);
-        ui->stackedWidget->setCurrentIndex(2);
+        ui->stackedWidget->setCurrentIndex(3);
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Vérifier votre mdp !"));
         return;
@@ -153,11 +226,11 @@ void MainWindow::on_BtnLoginFace_clicked()
         if (!cap.isOpened()) return;
         Mat frame, faces;
         bool isSuccess = false;
-
+        int matchId = -1;
         while (cap.read(frame)) {
             if (frame.empty()) break;
 
-            int matchId = -1;
+
             detector->setInputSize(frame.size());
             detector->detect(frame, faces);
 
@@ -201,6 +274,7 @@ void MainWindow::on_BtnLoginFace_clicked()
 
             // Show green rectangle for 1 second THEN redirect
             if (matchId != -1) {
+                currentId = matchId;
                 QThread::msleep(500);
                 isSuccess = true;
                 break;
@@ -208,10 +282,12 @@ void MainWindow::on_BtnLoginFace_clicked()
         }
 
         cap.release();
-        QMetaObject::invokeMethod(this, [this, isSuccess](){
+        QMetaObject::invokeMethod(this, [this, isSuccess,matchId](){
+            persistSessionUser(matchId);
             destroyAllWindows();
             if (isSuccess) {
-                ui->stackedWidget->setCurrentIndex(2);
+                ui->stackedWidget->setCurrentIndex(3);
+                ui->DeconnecterUtilisateur->show();
                 ui->SideBar->setVisible(true);
             }
 
@@ -275,7 +351,7 @@ void MainWindow::on_AjoutEmploye_clicked()
                             nullptr);
             msg.setCursor(Qt::PointingHandCursor);
             msg.exec();
-            ui->tableView->setModel(Etmp.afficher());
+            refreshEmployeeTable();
             ui->DateNaissance->setDate(QDate::currentDate());
             ui->DateRecrutementEmploye->setDate(QDate::currentDate());
             ui->nomEmploye->setText("");
@@ -306,7 +382,7 @@ void MainWindow::on_AjoutEmploye_clicked()
                             nullptr);
             msg.setCursor(Qt::PointingHandCursor);
             msg.exec();
-            ui->tableView->setModel(Etmp.afficher());
+            refreshEmployeeTable();
             ui->DateNaissance->setDate(QDate::currentDate());
             ui->DateRecrutementEmploye->setDate(QDate::currentDate());
             ui->nomEmploye->setText("");
@@ -356,7 +432,7 @@ void MainWindow::on_SupprimerEmploye_clicked()
                             nullptr);
             msg.setCursor(Qt::PointingHandCursor);
             msg.exec();
-            ui->tableView->setModel(Etmp.afficher());
+            refreshEmployeeTable();
         } else {
             QMessageBox msg(QMessageBox::Critical,
                             tr("Erreur"),
@@ -463,7 +539,7 @@ void MainWindow::on_InscriptionEmploye_clicked()
             cap.release();
             destroyWindow(WINNAME);
         }
-        ui->stackedWidget->setCurrentIndex(2);
+        ui->stackedWidget->setCurrentIndex(3);
         ui->SideBar->setVisible(true);
     } else {
         QMessageBox::critical(nullptr,tr("Erreur"),tr("Erreur lors du traitement du votre requête !"));
@@ -517,6 +593,14 @@ void MainWindow::persistSessionUser(int userId)
     s.setValue("userId",userId);
 }
 
+void MainWindow::showFrarmeAsDialog()
+{
+    ui->FrameAjout->setWindowFlags(Qt::Window | Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+    ui->FrameAjout->setWindowModality(Qt::ApplicationModal);
+    ui->FrameAjout->setWindowTitle("Ajouter employe");
+    ui->FrameAjout->show();
+}
+
 void MainWindow::onTokenRead(Job *job)
 {
     ReadPasswordJob* readJob = static_cast<ReadPasswordJob*>(job);
@@ -529,9 +613,12 @@ void MainWindow::onTokenRead(Job *job)
     QString token = readJob->textData();
     if (Etmp.validateSessionToken(token,savedId)) {
         currentId =savedId;
+        if (!refreshEmployeeTable()) {
+            return;
+        }
         ui->DeconnecterUtilisateur->setVisible(true);
         ui->SideBar->setVisible(true);
-        ui->stackedWidget->setCurrentIndex(2);
+        ui->stackedWidget->setCurrentIndex(3);
     } else {
         s.remove("userId");
         DeletePasswordJob* del = new DeletePasswordJob("WoodSync",this);
@@ -578,10 +665,38 @@ void MainWindow::on_DeconnecterUtilisateur_clicked()
     s.remove("userId");
     currentId = -1;
     ui->DeconnecterUtilisateur->setVisible(false);
-    ui->SideBar->setVisible(false);
+    //ui->SideBar->setVisible(false);
     ui->stackedWidget->setCurrentIndex(0);
     ui->NomLoginMenuisier->setText("");
     ui->PrenomLoginMenuisier->setText("");
     ui->MdpLoginMenuisier->setText("");
+}
+
+
+void MainWindow::on_RechercheEmployeBtn_clicked()
+{
+    const QString nom = ui->RechercheEmploye->text().trimmed();
+    if (nom.isEmpty()) {
+        refreshEmployeeTable();
+        return;
+    }
+
+    QSqlQueryModel* newModel = Etmp.rechercher(nom);
+    if (newModel) {
+        bindEmployeeTableModel(newModel);
+        if (newModel->rowCount() == 0) {
+            QMessageBox::information(nullptr, tr("Recherche"), tr("Aucun employé trouvé."));
+        }
+    } else {
+        QMessageBox::critical(nullptr,tr("Erreur"),tr("Erreur pendant la recherche."));
+        return;
+    }
+
+}
+
+
+void MainWindow::on_AjoutDialog_clicked()
+{
+    showFrarmeAsDialog();
 }
 

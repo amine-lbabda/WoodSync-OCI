@@ -33,6 +33,9 @@ public:
 
 private:
     void setupCalendar(QCalendarWidget *calendar);
+    void configureTableViews();
+    void bindEmployeeTableModel(QSqlQueryModel* model);
+    bool refreshEmployeeTable();
 
 private slots:
     void on_GestionStock_clicked();
@@ -77,6 +80,10 @@ private slots:
 
     void on_DeconnecterUtilisateur_clicked();
 
+    void on_RechercheEmployeBtn_clicked();
+
+    void on_AjoutDialog_clicked();
+
 private:
     Ui::MainWindow *ui;
     Employes Etmp;
@@ -89,6 +96,7 @@ private:
     QString recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
     void populateComboBox();
     void persistSessionUser(int userId);
+    void showFrarmeAsDialog();
     int currentId = -1;
 };
 #endif // MAINWINDOW_H

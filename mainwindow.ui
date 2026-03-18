@@ -1581,316 +1581,18 @@ QHeaderView::section:horizontal:last {
      </widget>
     </widget>
     <widget class="QWidget" name="GestionEmployePage">
-     <widget class="QFrame" name="frame_13">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>20</y>
-        <width>411</width>
-        <height>641</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
-	color: rgb(0, 51, 102);
-    border: 3px solid #7F5539;   /* Bleu roi (Royal Blue) */
-    border-radius: 20px;
-    font-family: &quot;Roboto Condensed&quot;;
-    background-color: white;
-}
-QLabel {
- border: 3px solid white; 
-    font-weight: 500;   /* un peu plus épais que normal */
-    font-size: 15px;
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Shadow::Raised</enum>
-      </property>
-      <widget class="QPushButton" name="AjoutEmploye">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>600</y>
-         <width>391</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Roboto Condensed</family>
-         <pointsize>-1</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: #414833;   /* Or brillant */
-    color: #E5EEF5;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 15px;
-    padding: 6px 15px;
-    font-family: &quot;Roboto Condensed&quot;;
-    border: 2px solid #b8860b;   /* Or foncé */
-}
-
-QPushButton:hover {
-          background-color: #656D4A;
-          border: 2px solid #656D4A;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>Ajouter</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="LType_5">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>30</y>
-         <width>321</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Ajouter un employé</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QWidget" name="formWidget" native="true">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>140</y>
-         <width>391</width>
-         <height>264</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: transparent;
-border:0px solid;</string>
-       </property>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="LType_4">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Nom</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="LEffectif_4">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Prénom</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="PrenomEmploye">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
-    border: 2px solid #7F5539
-;   /* Gris doux */
-    border-radius: 6px;
-    padding: 4px 8px;
-    background: #f9f9f9;         /* Fond légèrement gris clair */
-    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
-    font-size: 14px;
-}
-QLineEdit:focus {
-    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
-    background: #ffffff;
-}
-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="LAdresse_7">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Date Naissance</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="LStatut_6">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Rôle</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QComboBox" name="RoleEmploye">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>Employé</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Technicien</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Menuisier</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Stagiaire</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="LStatut_7">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Tel</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLineEdit" name="TelEmploye">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
-    border: 2px solid #7F5539
-;   /* Gris doux */
-    border-radius: 6px;
-    padding: 4px 8px;
-    background: #f9f9f9;         /* Fond légèrement gris clair */
-    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
-    font-size: 14px;
-}
-QLineEdit:focus {
-    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
-    background: #ffffff;
-}
-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="LAdresse_8">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Date de Recrutement</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QDateEdit" name="DateRecrutementEmploye">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="LAdresse_9">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Heures travaillés</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QDoubleSpinBox" name="HeuresTravailleEmploye">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="nomEmploye">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
-    border: 2px solid #7F5539
-;   /* Gris doux */
-    border-radius: 6px;
-    padding: 4px 8px;
-    background: #f9f9f9;         /* Fond légèrement gris clair */
-    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
-    font-size: 14px;
-}
-QLineEdit:focus {
-    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
-    background: #ffffff;
-}
-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QDateEdit" name="DateNaissance">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="LStatut_8">
-          <property name="styleSheet">
-           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
-          </property>
-          <property name="text">
-           <string>Supervisé par</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QComboBox" name="SuperviseurEmploye">
-          <property name="styleSheet">
-           <string notr="true">border: 3px solid #7F5539</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
      <widget class="QWidget" name="widget_5" native="true">
       <property name="geometry">
        <rect>
-        <x>460</x>
-        <y>260</y>
-        <width>681</width>
+        <x>20</x>
+        <y>270</y>
+        <width>1121</width>
         <height>71</height>
        </rect>
       </property>
       <property name="styleSheet">
        <string notr="true">border:0px solid;
-</string>
+background-color:transparent;</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_StatusCards">
        <property name="spacing">
@@ -1918,6 +1620,38 @@ QPushButton:hover {
          </property>
          <property name="text">
           <string>Exporter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AjoutDialog">
+         <property name="font">
+          <font>
+           <family>Roboto Condensed</family>
+           <pointsize>-1</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Ajouter</string>
          </property>
         </widget>
        </item>
@@ -1976,9 +1710,9 @@ QPushButton:hover {
      <widget class="QWidget" name="widget_6" native="true">
       <property name="geometry">
        <rect>
-        <x>540</x>
+        <x>10</x>
         <y>7</y>
-        <width>521</width>
+        <width>1121</width>
         <height>51</height>
        </rect>
       </property>
@@ -2213,17 +1947,336 @@ QPushButton:hover {
        </property>
       </widget>
      </widget>
-     <widget class="QTableView" name="tableView">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>10</x>
         <y>60</y>
-        <width>691</width>
-        <height>192</height>
+        <width>1131</width>
+        <height>210</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">/* 1. The main table container */
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFrame" name="FrameAjout">
+         <property name="styleSheet">
+          <string notr="true">QFrame {
+	color: rgb(0, 51, 102);
+    border: 3px solid #7F5539;   /* Bleu roi (Royal Blue) */
+    border-radius: 20px;
+    font-family: &quot;Roboto Condensed&quot;;
+    background-color: white;
+}
+QLabel {
+ border: 3px solid white; 
+    font-weight: 500;   /* un peu plus épais que normal */
+    font-size: 15px;
+}</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <widget class="QPushButton" name="AjoutEmploye">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>600</y>
+            <width>391</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Roboto Condensed</family>
+            <pointsize>-1</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #414833;   /* Or brillant */
+    color: #E5EEF5;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 15px;
+    padding: 6px 15px;
+    font-family: &quot;Roboto Condensed&quot;;
+    border: 2px solid #b8860b;   /* Or foncé */
+}
+
+QPushButton:hover {
+          background-color: #656D4A;
+          border: 2px solid #656D4A;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Ajouter</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="LType_5">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>30</y>
+            <width>321</width>
+            <height>91</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Ajouter un employé</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QWidget" name="formWidget" native="true">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>110</y>
+            <width>391</width>
+            <height>401</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: transparent;
+border:0px solid;</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
+           </property>
+           <property name="rowWrapPolicy">
+            <enum>QFormLayout::RowWrapPolicy::DontWrapRows</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+           </property>
+           <property name="formAlignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>3</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>15</number>
+           </property>
+           <property name="topMargin">
+            <number>23</number>
+           </property>
+           <property name="bottomMargin">
+            <number>9</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="LType_4">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Nom</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="LEffectif_4">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Prénom</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="PrenomEmploye">
+             <property name="styleSheet">
+              <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="LAdresse_7">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Date Naissance</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="LStatut_6">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Rôle</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="RoleEmploye">
+             <property name="styleSheet">
+              <string notr="true">border: 3px solid #7F5539</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>Employé</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Technicien</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Menuisier</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Stagiaire</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="LStatut_7">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Tel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="TelEmploye">
+             <property name="styleSheet">
+              <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="LAdresse_8">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Date de Recrutement</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QDateEdit" name="DateRecrutementEmploye">
+             <property name="styleSheet">
+              <string notr="true">border: 3px solid #7F5539</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="LAdresse_9">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Heures travaillés</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QDoubleSpinBox" name="HeuresTravailleEmploye">
+             <property name="styleSheet">
+              <string notr="true">border: 3px solid #7F5539</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="nomEmploye">
+             <property name="styleSheet">
+              <string notr="true">QLineEdit {
+    border: 2px solid #7F5539
+;   /* Gris doux */
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #f9f9f9;         /* Fond légèrement gris clair */
+    selection-background-color: #d4af37;  /* Sélection en doré, petit rappel chic */
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #4169E1;   /* Gris un peu plus foncé quand focus */
+    background: #ffffff;
+}
+</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDateEdit" name="DateNaissance">
+             <property name="styleSheet">
+              <string notr="true">border: 3px solid #7F5539;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="LStatut_8">
+             <property name="styleSheet">
+              <string notr="true">font: 600 11pt &quot;Ubuntu Sans&quot;;</string>
+             </property>
+             <property name="text">
+              <string>Supervisé par</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="SuperviseurEmploye">
+             <property name="styleSheet">
+              <string notr="true">border: 3px solid #7F5539</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableView" name="tableView">
+         <property name="styleSheet">
+          <string notr="true">/* 1. The main table container */
 QTableView {
     background-color: #FFFFFF;
     border: 2px solid #7F5539;
@@ -2284,7 +2337,10 @@ QTableCornerButton::section {
     background-color: #656D4A;
     border: none;
 }</string>
-      </property>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="GestionCommandesPage">

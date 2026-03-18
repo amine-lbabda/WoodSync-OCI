@@ -105,7 +105,8 @@ public:
     }
 
     bool ajouter();
-    QSqlQueryModel* afficher();
+    QSqlQueryModel* afficher(int currentId);
+    QSqlQueryModel* rechercher(QString nom);
     bool modifier(int id);
     bool supprimer(int id);
     bool ajoutCompte();
