@@ -1,5 +1,13 @@
 #ifndef EMPLOYES_H
 #define EMPLOYES_H
+#include <QChart>
+#include <QBarSeries>
+#include <QPieSeries>
+#include <QPieSlice>
+#include <QBarSet>
+#include <QBarCategoryAxis>
+#include <QValueAxis>
+#include <QGraphicsScene>
 #include <QString>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
@@ -11,29 +19,38 @@
 #include <qtcsv/writer.h>
 #include <qtcsv/stringdata.h>
 #include <qtcsv/reader.h>
+#include <QCryptographicHash>
+#include <QFile>
+#include <QGraphicsScene>
+#include <QSqlError>
+#include <QFont>
+#include <QPen>
+#include <QFileDialog>
+#include <QDir>
 using namespace QtCSV;
 using namespace cv;
 using namespace std;
+using namespace cv::dnn;
 struct FaceTemplate {
     int id;
     QString name;
     Mat vector;
 };
-
 class Employes
 {
 public:
     Employes();
     Employes(QString nom,
              QString prenom,
-             int tel=0,
+             QString tel="0",
              float heures=0,
              QDate date_recrutement=QDate::currentDate()
-             ,QDate date_naissance=QDate::currentDate()
-             ,QString role="",
+             , QDate date_naissance=QDate::currentDate()
+             , QString role="",
              QString mdp="",
              QString mdp_hash="",
-             int id_supervised=0);
+             int id_supervised=0,
+             int id=-1);
     QString getNom(){
         return this->nom;
     }
@@ -46,10 +63,10 @@ public:
     void setPrenom(QString prenom){
         this->prenom = prenom;
     }
-    int getTel(){
+    QString getTel(){
         return this->tel;
     }
-    void setTel(int tel){
+    void setTel(QString tel){
         this->tel = tel;
     }
     float getHeures(){
@@ -105,8 +122,9 @@ public:
     }
 
     bool ajouter();
-    QSqlQueryModel* afficher(int currentId);
+    QSqlQueryModel* afficher();
     QSqlQueryModel* rechercher(QString nom);
+    QSqlQueryModel* trier(QString choice);
     bool modifier(int id);
     bool supprimer(int id);
     bool ajoutCompte();
@@ -117,10 +135,13 @@ public:
     bool saveSessionToken(const QString& token,const QDate& expiry,int userId);
     bool validateSessionToken(const QString& token,int id);
     bool clearSessionToken(int id);
+    QChart* genererStatistiquesHeures();
+    QChart* genererStatistiquesNaissances();
+    QChart* genererStatistiquesRepartition();
 
 private:
-    QString nom,prenom,role,mdp,mdp_hash;
-    int tel,id,id_supervised;
+    QString nom,prenom,role,mdp,mdp_hash,tel;
+    int id,id_supervised;
     float heures;
     QDate date_recrutement,date_naissance;
 };

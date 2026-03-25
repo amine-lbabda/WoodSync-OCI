@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "connection.h"
 #include <QApplication>
+#include <QFile>
 #include <QMessageBox>
 int main(int argc, char *argv[])
 {
@@ -8,7 +9,6 @@ int main(int argc, char *argv[])
     Connection &c = Connection::createInstance();
     bool test = c.createConnection();
     MainWindow w;
-
     QMessageBox msgBox;
     msgBox.setCursor(Qt::PointingHandCursor);
     msgBox.setStandardButtons(QMessageBox::Ok);
@@ -18,12 +18,12 @@ int main(int argc, char *argv[])
         msgBox.setWindowTitle(QObject::tr("Succés"));
         msgBox.setText(QObject::tr("Connection établie avec succées !"));
         msgBox.exec();
-        return a.exec();
     } else {
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setWindowTitle(QObject::tr("Erreur"));
         msgBox.setText(QObject::tr("Échec de la connection !"));
         msgBox.exec();
     }
-    return -1;
+
+    return a.exec();
 }

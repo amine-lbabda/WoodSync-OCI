@@ -1,4 +1,4 @@
-QT       += core gui sql concurrent
+QT       += core gui sql charts network concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,13 +12,20 @@ SOURCES += \
     connection.cpp \
     employes.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    material.cpp \
+    geminiclient.cpp \
+    smtpclient.cpp \
+    emaildialog.cpp
 
 HEADERS += \
     connection.h \
-    dotenv.h \
-    employes.h \
-    mainwindow.h
+    mainwindow.h \
+    material.h \
+    geminiclient.h \
+    smtpclient.h \
+    emaildialog.h \
+    employes.h
 
 FORMS += \
     mainwindow.ui
@@ -46,5 +53,8 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lqtcsv
 
 INCLUDEPATH += $$PWD/../../../../usr/local/include/qtcsv
 DEPENDPATH += $$PWD/../../../../usr/local/include/qtcsv
-INCLUDEPATH += /home/amine/Qt/6.7.3/gcc_64/include/qt6keychain
-LIBS += -L/home/amine/Qt/6.7.3/gcc_64/lib -lqt6keychain
+
+unix:!macx: LIBS += -L$$PWD/../../Qt/6.7.3/gcc_64/lib/ -lqt6keychain
+
+INCLUDEPATH += $$PWD/../../Qt/6.7.3/gcc_64/include/qt6keychain
+DEPENDPATH += $$PWD/../../Qt/6.7.3/gcc_64/include/qt6keychain
