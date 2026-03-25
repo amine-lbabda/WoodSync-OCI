@@ -25,7 +25,8 @@ HEADERS += \
     geminiclient.h \
     smtpclient.h \
     emaildialog.h \
-    employes.h
+    employes.h \
+    dotenv.h
 
 FORMS += \
     mainwindow.ui
