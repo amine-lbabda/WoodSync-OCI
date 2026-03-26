@@ -1,3 +1,13 @@
+/**
+ * @file mainwindow.h
+ * @author Ayoub Gharbi & Mohamed Amine Lbabda
+ * @brief Header file containing the functions to run the main application 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

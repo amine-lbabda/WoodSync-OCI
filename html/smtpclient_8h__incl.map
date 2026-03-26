@@ -1,0 +1,13 @@
+<map id="smtpclient.h" name="smtpclient.h">
+<area shape="rect" id="Node000001" title="Client to send emails." alt="" coords="195,5,298,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,80,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,33,89,77,88,72,213,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="105,79,175,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="231,33,170,73,167,69,228,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="199,79,294,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="249,31,249,65,244,65,244,31"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="318,79,447,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="270,28,350,70,347,75,267,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="471,79,625,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="296,28,487,73,486,78,294,33"/>
+</map>

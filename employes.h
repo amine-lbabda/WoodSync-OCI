@@ -1,3 +1,13 @@
+/**
+ * @file employes.h
+ * @author your name (you@domain.com)
+ * @brief This is the header file of the employee class which represents an employee across the model class
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #ifndef EMPLOYES_H
 #define EMPLOYES_H
 #include <QChart>

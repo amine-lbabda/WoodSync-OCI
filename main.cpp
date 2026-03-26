@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @author Mohamed Amine Lbabda
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "mainwindow.h"
 #include "connection.h"
 #include <QApplication>

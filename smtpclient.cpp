@@ -1,36 +1,73 @@
+/**
+ * @file smtpclient.cpp
+ * @author Ayoub Gharbi
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "smtpclient.h"
 
-#include <QAbstractSocket>
-#include <QRegularExpression>
 
+/**
+ * @brief Construct a new Smtp Client:: Smtp Client object
+ * 
+ * @param parent 
+ */
 SmtpClient::SmtpClient(QObject *parent)
     : QObject(parent)
     , m_port(587)
     , m_socket(this)
 {
 }
-
+/**
+ * @brief setting the host for the email server
+ * 
+ * @param host 
+ */
 void SmtpClient::setHost(const QString &host)
 {
     m_host = host;
 }
-
+/**
+ * @brief setting the port for the email server
+ * 
+ * @param port 
+ */
 void SmtpClient::setPort(quint16 port)
 {
     m_port = port;
 }
-
+/**
+ * @brief setting credentials for the SMTP client
+ * 
+ * @param user 
+ * @param password 
+ */
 void SmtpClient::setCredentials(const QString &user, const QString &password)
 {
     m_user = user;
     m_password = password;
 }
-
+/**
+ * @brief Utility function 
+ * 
+ * @param s 
+ * @return QByteArray 
+ */
 QByteArray SmtpClient::base64Encode(const QString &s)
 {
     return s.toUtf8().toBase64();
 }
-
+/**
+ * @brief Utility function
+ * 
+ * @param cmd 
+ * @return true 
+ * @return false 
+ */
 bool SmtpClient::sendCommand(const QByteArray &cmd)
 {
     if (!m_socket.isWritable()) return false;
@@ -39,7 +76,15 @@ bool SmtpClient::sendCommand(const QByteArray &cmd)
         m_socket.write("\r\n");
     return m_socket.flush();
 }
-
+/**
+ * @brief Utility function
+ * 
+ * @param expectedCode 
+ * @param timeoutMs 
+ * @param lastLine 
+ * @return true 
+ * @return false 
+ */
 bool SmtpClient::waitForResponse(int expectedCode, int timeoutMs, QString *lastLine)
 {
     QString buffer;

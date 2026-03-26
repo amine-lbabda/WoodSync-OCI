@@ -1,3 +1,13 @@
+/**
+ * @file mainwindow.cpp
+ * @author Mohamed Amine Lbabda & Ayoub Gharbi
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "geminiclient.h"
@@ -64,7 +74,10 @@
 // 4 GestionCommandesPage, 5 GestionProduitsPage, 6 GestionReclamationsPage,
 // 7 GestionMaterielPage, 8 AjouterMaterielPage, 9 StatistiquePAge, 10 AI_F.
 static constexpr int kStackedIndexAiAnalysisPage = 10;
-
+/**
+ * @brief Structure pour structurer la réponse générer par OLLAMA
+ * 
+ */
 struct PreventiveScoreVisual {
     QString text;
     QColor bg;
@@ -72,6 +85,11 @@ struct PreventiveScoreVisual {
 };
 
 // Même règles que l’onglet IA : 0–30 vert, 31–60 orange, > 60 rouge ; sinon neutre.
+/**
+ * @brief Setting up the UI for the animation
+ * @param scoreVariant 
+ * @return PreventiveScoreVisual 
+ */
 static PreventiveScoreVisual preventiveScoreVisual(const QVariant &scoreVariant)
 {
     PreventiveScoreVisual r;
@@ -105,7 +123,12 @@ static PreventiveScoreVisual preventiveScoreVisual(const QVariant &scoreVariant)
     }
     return r;
 }
-
+/**
+ * @brief Application des styles 
+ * 
+ * @param item 
+ * @param scoreVariant 
+ */
 static void styleTableItemForPreventiveScore(QTableWidgetItem *item, const QVariant &scoreVariant)
 {
     if (!item)
@@ -121,7 +144,11 @@ struct AiScoreUiStyle {
     QString valueLabelSheet;
     QString riskBadgeSheet;
 };
-
+/**
+ * @brief Styles de l'UI
+ * 
+ * @return AiScoreUiStyle 
+ */
 static AiScoreUiStyle aiScoreUiStyleNeutral()
 {
     const QString bar = QStringLiteral(
@@ -134,8 +161,13 @@ static AiScoreUiStyle aiScoreUiStyleNeutral()
         "font-weight: 700; font-size: 14px; border: 1px solid rgba(0, 0, 0, 0.06); }");
     return { bar, val, badge };
 }
-
 // Score préventif : 0–30 vert doux, 31–60 orange doux, > 60 rouge doux (texte foncé pour le contraste).
+/**
+ * @brief Styles UI
+ * 
+ * @param score 
+ * @return AiScoreUiStyle 
+ */
 static AiScoreUiStyle aiScoreUiStyleForPreventiveScore(int score)
 {
     const int s = qBound(0, score, 100);
@@ -163,7 +195,15 @@ static AiScoreUiStyle aiScoreUiStyleForPreventiveScore(int score)
         .arg(chunk, text);
     return { bar, val, badge };
 }
-
+/**
+ * @brief Styles UI
+ * 
+ * @param bar 
+ * @param scoreVal 
+ * @param riskBadge 
+ * @param score 
+ * @param neutral 
+ */
 static void applyPreventiveScoreAppearance(QProgressBar *bar, QLabel *scoreVal, QLabel *riskBadge, int score,
                                            bool neutral)
 {
@@ -178,6 +218,12 @@ static void applyPreventiveScoreAppearance(QProgressBar *bar, QLabel *scoreVal, 
 
 // Oracle : INDICERISQUEPANNE est souvent un NUMBER (code). L'IA renvoie un libellé français → ORA-01722 si on lie du texte.
 // Adapter les codes si votre schéma CHECK utilise une autre échelle.
+/**
+ * @brief Utility function
+ * 
+ * @param risk 
+ * @return int 
+ */
 static int riskPanneLabelToOracleCode(const QString &risk)
 {
     const QString r = risk.trimmed().toLower();
@@ -191,7 +237,12 @@ static int riskPanneLabelToOracleCode(const QString &risk)
         return 3;
     return 2;
 }
-
+/**
+ * @brief Utility function
+ * 
+ * @param v 
+ * @return QString 
+ */
 static QString riskPanneDbValueToLabel(const QVariant &v)
 {
     if (v.isNull())
@@ -215,6 +266,11 @@ static QString riskPanneDbValueToLabel(const QVariant &v)
 }
 
 #include "employes.h"
+/**
+ * @brief Construct a new Main Window:: Main Window object
+ * 
+ * @param parent 
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_editingMaterialId(-1)
@@ -339,7 +395,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->DeconnecterUtilisateur->setAutoExclusive(false);
 
 }
-
+/**
+ * @brief Configuration des tables
+ *
+ */
 void MainWindow::configureTableViews()
 {
     if (ui->tableWidget_3 && ui->tableWidget_3->horizontalHeader()) {
@@ -352,7 +411,11 @@ void MainWindow::configureTableViews()
         ui->tableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     }
 }
-
+/**
+ * @brief Configuration du table des employés 
+ * 
+ * @param model 
+ */
 void MainWindow::bindEmployeeTableModel(QSqlQueryModel *model)
 {
     if (!ui->tableView) return;
@@ -374,7 +437,12 @@ void MainWindow::bindEmployeeTableModel(QSqlQueryModel *model)
     }
 
 }
-
+/**
+ * @brief Rafraîchir le table
+ * 
+ * @return true 
+ * @return false 
+ */
 bool MainWindow::refreshEmployeeTable()
 {
     QSqlQueryModel* model = Etmp.afficher();
@@ -382,7 +450,10 @@ bool MainWindow::refreshEmployeeTable()
     bindEmployeeTableModel(model);
     return true;
 }
-
+/**
+ * @brief Générer des statististiques
+ * 
+ */
 void MainWindow::generateChart()
 {
     QChart* chart = Etmp.genererStatistiquesHeures();
@@ -410,7 +481,10 @@ void MainWindow::generateChart()
 
     ui->Stat->setFrameShape(QFrame::NoFrame);
 }
-
+/**
+ * @brief Générer du graphique du répartition
+ * 
+ */
 void MainWindow::generateChartRepartition()
 {
     QChart* chart = Etmp.genererStatistiquesRepartition();
@@ -435,7 +509,10 @@ void MainWindow::generateChartRepartition()
     ui->Repartition->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->Repartition->setFrameShape(QFrame::NoFrame);
 }
-
+/**
+ * @brief Générer du graphique du répartition
+ * 
+ */
 void MainWindow::generatePie()
 {
     QChart* chart = Etmp.genererStatistiquesNaissances();
@@ -577,13 +654,20 @@ void MainWindow::generatePie()
     ui->Pie->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->Pie->setFrameShape(QFrame::NoFrame);
 }
-
+/**
+ * @brief Rafraîchir des statistiques
+ * 
+ */
 void MainWindow::refreshStatistics()
 {
     generateChart();
     generatePie();
 }
-
+/**
+ * @brief Préparation des styles des calendriers
+ * 
+ * @param calendar 
+ */
 void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     if (!calendar) return;
 
@@ -608,6 +692,10 @@ void MainWindow::setupCalendar(QCalendarWidget *calendar) {
     // 3. Apply widget-local style to enforce compatibility
     calendar->setStyleSheet("background-color: white; color: black; border: 1px solid #ccc;");
 }
+/**
+ * @brief Destroy the Main Window:: Main Window object
+ * 
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -621,7 +709,10 @@ MainWindow::~MainWindow()
 // =========================
 // Material Domain Functions
 // =========================
-
+/**
+ * @brief Navigation vers la Gestion des stocks 
+ * 
+ */
 void MainWindow::on_GestionStock_clicked()
 {
     if (currentId != -1) {
@@ -632,7 +723,10 @@ void MainWindow::on_GestionStock_clicked()
 
 }
 
-
+/**
+ * @brief Navigation vers la Gestion des avis 
+ * 
+ */
 void MainWindow::on_GestionReclamations_clicked()
 {
     if (currentId != -1) {
@@ -642,7 +736,10 @@ void MainWindow::on_GestionReclamations_clicked()
     }
 }
 
-
+/**
+ * @brief Navigation vers @see employes.cpp
+ * 
+ */
 void MainWindow::on_GestionEmployes_clicked()
 {
     if (currentId != -1) {

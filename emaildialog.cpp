@@ -1,3 +1,13 @@
+/**
+ * @file emaildialog.cpp
+ * @author Ayoub Gharbi
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "emaildialog.h"
 #include "smtpclient.h"
 
@@ -23,12 +33,23 @@ static const char *REPORT_HTML_STYLE =
     ".report-box p { margin: 0 0 0.8em 0; } "
     ".report-box p:last-child { margin-bottom: 0; } "
     "h2 { color: #7F5539; font-size: 16px; margin: 0 0 12px 0; }";
-
+/**
+ * @brief email verification
+ * 
+ * @param s 
+ * @return true 
+ * @return false 
+ */
 static bool looksLikeEmail(const QString &s)
 {
     return s.contains('@') && s.contains('.') && s.length() >= 5;
 }
-
+/**
+ * @brief Utility function
+ * 
+ * @param s 
+ * @return QString 
+ */
 static QString htmlEscape(const QString &s)
 {
     QString out;
@@ -42,7 +63,12 @@ static QString htmlEscape(const QString &s)
     }
     return out;
 }
-
+/**
+ * @brief Utility function
+ * 
+ * @param plainReport 
+ * @return QString 
+ */
 static QString buildReportHtmlEmail(const QString &plainReport)
 {
     QString bodyEscaped = htmlEscape(plainReport);
@@ -54,7 +80,12 @@ static QString buildReportHtmlEmail(const QString &plainReport)
         "</body></html>"
     ).arg(QLatin1String(REPORT_HTML_STYLE), bodyEscaped);
 }
-
+/**
+ * @brief Construct a new Email Dialog:: Email Dialog object
+ * 
+ * @param reportText 
+ * @param parent 
+ */
 EmailDialog::EmailDialog(const QString &reportText, QWidget *parent)
     : QDialog(parent)
     , m_reportText(reportText)
@@ -78,12 +109,19 @@ EmailDialog::EmailDialog(const QString &reportText, QWidget *parent)
     connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
     mainLayout->addWidget(box);
 }
-
+/**
+ * @brief Adding the recepient email
+ * 
+ * @return QString 
+ */
 QString EmailDialog::recipientEmail() const
 {
     return m_editTo->text().trimmed();
 }
-
+/**
+ * @brief Sending the report to the email
+ * 
+ */
 void EmailDialog::onSendClicked()
 {
     if (!validateAndAccept())
@@ -116,7 +154,12 @@ void EmailDialog::onSendClicked()
         QMessageBox::warning(this, tr("Erreur d'envoi"), tr("Impossible d'envoyer l'e-mail : %1").arg(err));
     }
 }
-
+/**
+ * @brief Validation of the email process
+ * 
+ * @return true 
+ * @return false 
+ */
 bool EmailDialog::validateAndAccept()
 {
     QString to = m_editTo->text().trimmed();

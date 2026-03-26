@@ -1,0 +1,12 @@
+<map id="geminiclient.h" name="geminiclient.h">
+<area shape="rect" id="Node000001" title="Client to communicate with OLLAMA API to generate scores locally." alt="" coords="116,5,231,31"/>
+<area shape="rect" id="Node000002" href="$geminiclient_8cpp.html" title=" " alt="" coords="5,79,136,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,41,89,81,86,76,144,36"/>
+<area shape="rect" id="Node000003" href="$mainwindow_8cpp.html" title=" " alt="" coords="108,152,239,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="176,45,176,152,171,152,171,45"/>
+<area shape="rect" id="Node000004" href="$mainwindow_8h.html" title="Header file containing the functions to run the main application." alt="" coords="211,79,327,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,37,255,76,252,81,198,41"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="244,114,191,154,187,150,241,110"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html" title=" " alt="" coords="263,152,345,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="283,115,301,151,296,153,279,118"/>
+</map>

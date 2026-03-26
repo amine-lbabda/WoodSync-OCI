@@ -1,3 +1,13 @@
+/**
+ * @file geminiclient.cpp
+ * @author Ayoub Gharbi
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "geminiclient.h"
 #include <QNetworkRequest>
 #include <QNetworkReply>

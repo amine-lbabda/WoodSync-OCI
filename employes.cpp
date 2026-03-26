@@ -1,4 +1,18 @@
+/**
+ * @file employes.cpp
+ * @author Mohamed Amine Lbabda
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "employes.h"
+/**
+ * @brief Construct a new Employes:: Employes object
+ * 
+ */
 Employes::Employes() {
     this->id = -1;
     this->nom = "";
@@ -12,7 +26,21 @@ Employes::Employes() {
     this->mdp_hash="";
     this->id_supervised=-1;
 }
-
+/**
+ * @brief Construct a new Employes:: Employes object
+ * 
+ * @param nom 
+ * @param prenom 
+ * @param tel 
+ * @param heures 
+ * @param date_recrutement 
+ * @param date_naissance 
+ * @param role 
+ * @param mdp 
+ * @param mdp_hash 
+ * @param id_supervised 
+ * @param id 
+ */
 Employes::Employes(QString nom, QString prenom, QString tel, float heures, QDate date_recrutement, QDate date_naissance, QString role, QString mdp, QString mdp_hash, int id_supervised, int id)
 {
     this->id = id;
@@ -28,7 +56,12 @@ Employes::Employes(QString nom, QString prenom, QString tel, float heures, QDate
     this->id_supervised = id_supervised;
 
 }
-
+/**
+ * @brief Adding an employee to the database
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Employes::ajouter()
 {
     QSqlQuery query;
@@ -62,7 +95,11 @@ bool Employes::ajouter()
         return true;
     }
 }
-
+/**
+ * @brief Shwoing an employee on the tableview 
+ * 
+ * @return QSqlQueryModel* 
+ */
 QSqlQueryModel *Employes::afficher()
 {
     QSqlQuery query;
@@ -111,7 +148,12 @@ QSqlQueryModel *Employes::afficher()
     model->setHeaderData(8,Qt::Horizontal,QObject::tr("Rôle"));
     return model;
 }
-
+/**
+ * @brief Showing the result of a search on the table 
+ * 
+ * @param nom 
+ * @return QSqlQueryModel* 
+ */
 QSqlQueryModel *Employes::rechercher(QString nom)
 {
     QString searchText = nom.trimmed();
@@ -168,7 +210,12 @@ QSqlQueryModel *Employes::rechercher(QString nom)
     model->setHeaderData(8,Qt::Horizontal,QObject::tr("Rôle"));
     return model;
 }
-
+/**
+ * @brief Sorting table employees based on a criteria
+ * 
+ * @param choice 
+ * @return QSqlQueryModel* 
+ */
 QSqlQueryModel *Employes::trier(QString choice)
 {
     QSqlQueryModel* model = new QSqlQueryModel();
@@ -228,7 +275,13 @@ QSqlQueryModel *Employes::trier(QString choice)
     return model;
 }
 
-
+/**
+ * @brief Updating an employee data 
+ * 
+ * @param id 
+ * @return true 
+ * @return false 
+ */
 bool Employes::modifier(int id)
 {
     QString res = QString::number(id);
@@ -254,7 +307,13 @@ bool Employes::modifier(int id)
         return true;
     }
 }
-
+/**
+ * @brief Deleting an employee based on the ID 
+ * 
+ * @param id 
+ * @return true 
+ * @return false 
+ */
 bool Employes::supprimer(int id)
 {
     QString res = QString::number(id);
@@ -268,7 +327,12 @@ bool Employes::supprimer(int id)
         return true;
     }
 }
-
+/**
+ * @brief Adding an account to access the interface 
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Employes::ajoutCompte()
 {
     QSqlQuery query,seqQuery;
@@ -291,7 +355,12 @@ bool Employes::ajoutCompte()
         return true;
     }
 }
-
+/**
+ * @brief Checking whether the account exists or not
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Employes::existanceCompte()
 {
     QSqlQuery query;
@@ -315,7 +384,13 @@ bool Employes::existanceCompte()
     }
     return false;
 }
-
+/**
+ * @brief Ajout de la reconnaissance faciale 
+ * 
+ * @param data 
+ * @return true 
+ * @return false 
+ */
 bool Employes::ajoutReconaissanceFaciale(QByteArray data)
 {
     if (data.isEmpty()) {
@@ -334,7 +409,14 @@ bool Employes::ajoutReconaissanceFaciale(QByteArray data)
         return true;
     }
 }
-
+/**
+ * @brief Export de la liste des employés sous format d'un fichier csv
+ * 
+ * @param view 
+ * @param filePath 
+ * @return true 
+ * @return false 
+ */
 bool Employes::exportToCSV(QTableView *view,QString filePath)
 {
     StringData data;
@@ -356,7 +438,13 @@ bool Employes::exportToCSV(QTableView *view,QString filePath)
     }
     return false;
 }
-
+/**
+ * @brief Importation d'un fichier csv et insertion de ces données dans la base de données
+ * 
+ * @param view 
+ * @return true 
+ * @return false 
+ */
 bool Employes::importCSV(QTableView *view)
 {
     QSqlDatabase db = QSqlDatabase::database();
@@ -456,7 +544,15 @@ bool Employes::importCSV(QTableView *view)
 
     return importedCount > 0;
 }
-
+/**
+ * @brief Sauvgarder le token générée lors du login
+ * 
+ * @param token 
+ * @param expiry 
+ * @param userId 
+ * @return true 
+ * @return false 
+ */
 bool Employes::saveSessionToken(const QString &token, const QDate &expiry,int userId)
 {
     QSqlQuery query;
@@ -472,7 +568,14 @@ bool Employes::saveSessionToken(const QString &token, const QDate &expiry,int us
         return true;
     }
 }
-
+/**
+ * @brief Validation de la validité du token
+ * 
+ * @param token 
+ * @param id 
+ * @return true 
+ * @return false 
+ */
 bool Employes::validateSessionToken(const QString &token, int id)
 {
     QSqlQuery query;
@@ -487,7 +590,13 @@ bool Employes::validateSessionToken(const QString &token, int id)
         return query.next();
     }
 }
-
+/**
+ * @brief Suppression du token générée lors de la déconnection afin de garantir plus de sécurité
+ * 
+ * @param id 
+ * @return true 
+ * @return false 
+ */
 bool Employes::clearSessionToken(int id)
 {
     QSqlQuery query;
@@ -501,7 +610,11 @@ bool Employes::clearSessionToken(int id)
         return true;
     }
 }
-
+/**
+ * @brief Générer les statistiques des employés (Répartition de la moyenne des heures travaillés par employés)
+ * 
+ * @return QChart* 
+ */
 QChart* Employes::genererStatistiquesHeures() {
     QColor backgroundColor(0x414833);
     QColor plotColor(0x4a533f);
@@ -593,7 +706,11 @@ QChart* Employes::genererStatistiquesHeures() {
     chart->legend()->setVisible(false);
     return chart;
 }
-
+/**
+ * @brief Générer les statistiques des employés (Répartition des employés par la naissance)
+ * 
+ * @return QChart* 
+ */
 QChart *Employes::genererStatistiquesNaissances()
 {
     const QColor backgroundColor(0x414833);
@@ -670,7 +787,10 @@ QChart *Employes::genererStatistiquesNaissances()
     chart->legend()->setFont(QFont("Ubuntu", 9, QFont::DemiBold));
     return chart;
 }
-
+/**
+ * @brief Générer les statistiques des employés (Répartition des employés par la catégorie)
+ * @return QChart* 
+ */
 QChart *Employes::genererStatistiquesRepartition()
 {
     const QColor backgroundColor(0x414833);

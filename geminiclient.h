@@ -1,3 +1,13 @@
+/**
+ * @file geminiclient.h
+ * @author Ayoub Gharbi
+ * @brief Client to communicate with OLLAMA API to generate scores locally
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #ifndef GEMINICLIENT_H
 #define GEMINICLIENT_H
 

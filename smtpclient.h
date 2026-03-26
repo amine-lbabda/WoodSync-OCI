@@ -1,9 +1,21 @@
+/**
+ * @file smtpclient.h
+ * @author Ayoub Gharbi
+ * @brief Client to send emails
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #ifndef SMTPCLIENT_H
 #define SMTPCLIENT_H
 
 #include <QObject>
 #include <QString>
 #include <QSslSocket>
+#include <QAbstractSocket>
+#include <QRegularExpression>
 
 class SmtpClient : public QObject
 {

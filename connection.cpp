@@ -1,11 +1,31 @@
+/**
+ * @file connection.cpp
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "connection.h"
 using namespace std;
+/**
+ * @brief Creating the instance of a singleton
+ * 
+ * @return Connection& 
+ */
 Connection &Connection::createInstance()
 {
     static Connection instance;
     return instance;
 }
-
+/**
+ * @brief Creating the connection to the Oracle Database
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Connection::createConnection()
 {
     dotenv::init("/home/amine/Desktop/WoodSync-OCI/.env");
@@ -25,11 +45,17 @@ bool Connection::createConnection()
         return false;
     }
 }
-
+/**
+ * @brief Construct a new Connection:: Connection object
+ * 
+ */
 Connection::Connection() {
     db = QSqlDatabase::addDatabase("QOCI");
 }
-
+/**
+ * @brief Destroy the Connection:: Connection object
+ * 
+ */
 Connection::~Connection()
 {
     if (db.isOpen()){

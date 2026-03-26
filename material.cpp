@@ -1,28 +1,14 @@
+/**
+ * @file material.cpp
+ * @author Ayoub Gharbi
+ * @brief 
+ * @version 0.1
+ * @date 2026-03-26
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
 #include "material.h"
-
-#include <QBrush>
-#include <QColor>
-#include <QFile>
-#include <QEasingCurve>
-#include <QFont>
-#include <QLinearGradient>
-#include <QLocale>
-#include <QObject>
-#include <QPen>
-#include <QStringConverter>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QTextStream>
-#include <QtCharts/QAbstractAxis>
-#include <QtCharts/QBarCategoryAxis>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QChart>
-#include <QtCharts/QLegend>
-#include <QtCharts/QPieSeries>
-#include <QtCharts/QPieSlice>
-#include <QtCharts/QValueAxis>
 
 static QString escSql(QString s)
 {

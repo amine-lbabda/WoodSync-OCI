@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+<namespace>org.doxygen.Project</namespace>
+<virtualFolder>doc</virtualFolder>
+<filterSection>
+<filterAttribute>doxygen</filterAttribute>
+<toc>
+<section title="WoodSync" ref="index.html">
+<section title="README" ref="md_README.html"/>
+<section title="Classes" ref="annotated.html">
+<section title="Class List" ref="annotated.html">
+<section title="AiScoreUiStyle" ref="structAiScoreUiStyle.html">
+</section>
+<section title="Connection" ref="classConnection.html">
+<section title="createConnection" ref="classConnection.html#aa050b986119659a294b8deeda055e2a6"/>
+</section>
+<section title="dotenv" ref="classdotenv.html">
+</section>
+<section title="EmailDialog" ref="classEmailDialog.html">
+<section title="EmailDialog" ref="classEmailDialog.html#ad6ffe0a4a738fd483f2520dad1d1ef91"/>
+<section title="recipientEmail" ref="classEmailDialog.html#a1892dfb39ffca5f1fecec61ac8111440"/>
+</section>
+<section title="Employes" ref="classEmployes.html">
+<section title="Employes" ref="classEmployes.html#a9f208ed1b8f632b49fcefd0ebef238d3"/>
+<section title="Employes" ref="classEmployes.html#a8523c64b43e4acefbcbb2d3256f76152"/>
+<section title="afficher" ref="classEmployes.html#ae3023d1162cfdc5aa32ba34b321be237"/>
+<section title="ajoutCompte" ref="classEmployes.html#a3fec2854c338138fbb8089c6a2466b45"/>
+<section title="ajouter" ref="classEmployes.html#a6f9fc259296ce30f74cc6614aab5330f"/>
+<section title="ajoutReconaissanceFaciale" ref="classEmployes.html#a6eb10029a726df2848adddee22c28273"/>
+<section title="clearSessionToken" ref="classEmployes.html#ae9c88af68d55d2b7b6f779c8c8c15fc6"/>
+<section title="existanceCompte" ref="classEmployes.html#a66dd6d9e291ea94be25da54a9a8277f9"/>
+<section title="exportToCSV" ref="classEmployes.html#a18692539de0c3ff1cd0cbac5aa53e780"/>
+<section title="genererStatistiquesHeures" ref="classEmployes.html#afdf536997a37b416f16d989dbfd73f94"/>
+<section title="genererStatistiquesNaissances" ref="classEmployes.html#aedde2126bd9266e0bc4f8ca075bb6b26"/>
+<section title="genererStatistiquesRepartition" ref="classEmployes.html#a91633d3aad98738519f8f66395abc510"/>
+<section title="importCSV" ref="classEmployes.html#a430a466d19c293ab4d5920df83e85ca9"/>
+<section title="modifier" ref="classEmployes.html#a7355a7147ba7864424fd15bf875eee6f"/>
+<section title="rechercher" ref="classEmployes.html#a84e544c78fd73c7de4f6176443f3dc92"/>
+<section title="saveSessionToken" ref="classEmployes.html#ab619cf2f40a7f7cb8530d3925645b964"/>
+<section title="supprimer" ref="classEmployes.html#aeed59b0f95cd1c69c03649e6ff1c1d21"/>
+<section title="trier" ref="classEmployes.html#af636e8f8b10650f0445f518d0d24f7f9"/>
+<section title="validateSessionToken" ref="classEmployes.html#a7a56d63487ec84299aafa75a4f94c2ae"/>
+</section>
+<section title="FaceTemplate" ref="structFaceTemplate.html">
+</section>
+<section title="GeminiClient" ref="classGeminiClient.html">
+</section>
+<section title="MainWindow" ref="classMainWindow.html">
+<section title="MainWindow" ref="classMainWindow.html#a996c5a2b6f77944776856f08ec30858d"/>
+<section title="~MainWindow" ref="classMainWindow.html#ae98d00a93bc118200eeef9f9bba1dba7"/>
+</section>
+<section title="Material" ref="classMaterial.html">
+</section>
+<section title="PreventiveScoreVisual" ref="structPreventiveScoreVisual.html">
+</section>
+<section title="SmtpClient" ref="classSmtpClient.html">
+<section title="SmtpClient" ref="classSmtpClient.html#ac9ad09132225066aad2f43bedf1f3431"/>
+<section title="setCredentials" ref="classSmtpClient.html#a36e508a9f8d507b07fb182343b7cf330"/>
+<section title="setHost" ref="classSmtpClient.html#a165668e828e6415b401f1285e006aa4e"/>
+<section title="setPort" ref="classSmtpClient.html#acbd7fb8420533fd42633178bdf65a998"/>
+</section>
+</section>
+<section title="Class Index" ref="classes.html"/>
+<section title="Class Hierarchy" ref="hierarchy.html">
+<section title="AiScoreUiStyle" ref="structAiScoreUiStyle.html"/>
+<section title="Connection" ref="classConnection.html"/>
+<section title="dotenv" ref="classdotenv.html"/>
+<section title="Employes" ref="classEmployes.html"/>
+<section title="FaceTemplate" ref="structFaceTemplate.html"/>
+<section title="Material" ref="classMaterial.html"/>
+<section title="PreventiveScoreVisual" ref="structPreventiveScoreVisual.html"/>
+<section title="QDialog" ref="">
+<section title="EmailDialog" ref="classEmailDialog.html"/>
+</section>
+<section title="QMainWindow" ref="">
+<section title="MainWindow" ref="classMainWindow.html"/>
+</section>
+<section title="QObject" ref="">
+<section title="GeminiClient" ref="classGeminiClient.html"/>
+<section title="SmtpClient" ref="classSmtpClient.html"/>
+</section>
+</section>
+<section title="Class Members" ref="functions.html">
+<section title="All" ref="functions.html"/>
+<section title="Functions" ref="functions_func.html"/>
+</section>
+</section>
+<section title="Files" ref="files.html">
+<section title="File List" ref="files.html">
+<section title="connection.cpp" ref="connection_8cpp.html"/>
+<section title="connection.h" ref="connection_8h.html">
+<section title="Connection" ref="classConnection.html">
+<section title="createConnection" ref="classConnection.html#aa050b986119659a294b8deeda055e2a6"/>
+</section>
+</section>
+<section title="dotenv.h" ref="dotenv_8h.html">
+<section title="dotenv" ref="classdotenv.html">
+</section>
+</section>
+<section title="emaildialog.cpp" ref="emaildialog_8cpp.html">
+</section>
+<section title="emaildialog.h" ref="emaildialog_8h.html">
+<section title="EmailDialog" ref="classEmailDialog.html">
+<section title="EmailDialog" ref="classEmailDialog.html#ad6ffe0a4a738fd483f2520dad1d1ef91"/>
+<section title="recipientEmail" ref="classEmailDialog.html#a1892dfb39ffca5f1fecec61ac8111440"/>
+</section>
+</section>
+<section title="employes.cpp" ref="employes_8cpp.html"/>
+<section title="employes.h" ref="employes_8h.html">
+<section title="FaceTemplate" ref="structFaceTemplate.html">
+</section>
+<section title="Employes" ref="classEmployes.html">
+<section title="Employes" ref="classEmployes.html#a9f208ed1b8f632b49fcefd0ebef238d3"/>
+<section title="Employes" ref="classEmployes.html#a8523c64b43e4acefbcbb2d3256f76152"/>
+<section title="afficher" ref="classEmployes.html#ae3023d1162cfdc5aa32ba34b321be237"/>
+<section title="ajoutCompte" ref="classEmployes.html#a3fec2854c338138fbb8089c6a2466b45"/>
+<section title="ajouter" ref="classEmployes.html#a6f9fc259296ce30f74cc6614aab5330f"/>
+<section title="ajoutReconaissanceFaciale" ref="classEmployes.html#a6eb10029a726df2848adddee22c28273"/>
+<section title="clearSessionToken" ref="classEmployes.html#ae9c88af68d55d2b7b6f779c8c8c15fc6"/>
+<section title="existanceCompte" ref="classEmployes.html#a66dd6d9e291ea94be25da54a9a8277f9"/>
+<section title="exportToCSV" ref="classEmployes.html#a18692539de0c3ff1cd0cbac5aa53e780"/>
+<section title="genererStatistiquesHeures" ref="classEmployes.html#afdf536997a37b416f16d989dbfd73f94"/>
+<section title="genererStatistiquesNaissances" ref="classEmployes.html#aedde2126bd9266e0bc4f8ca075bb6b26"/>
+<section title="genererStatistiquesRepartition" ref="classEmployes.html#a91633d3aad98738519f8f66395abc510"/>
+<section title="importCSV" ref="classEmployes.html#a430a466d19c293ab4d5920df83e85ca9"/>
+<section title="modifier" ref="classEmployes.html#a7355a7147ba7864424fd15bf875eee6f"/>
+<section title="rechercher" ref="classEmployes.html#a84e544c78fd73c7de4f6176443f3dc92"/>
+<section title="saveSessionToken" ref="classEmployes.html#ab619cf2f40a7f7cb8530d3925645b964"/>
+<section title="supprimer" ref="classEmployes.html#aeed59b0f95cd1c69c03649e6ff1c1d21"/>
+<section title="trier" ref="classEmployes.html#af636e8f8b10650f0445f518d0d24f7f9"/>
+<section title="validateSessionToken" ref="classEmployes.html#a7a56d63487ec84299aafa75a4f94c2ae"/>
+</section>
+</section>
+<section title="geminiclient.cpp" ref="geminiclient_8cpp.html">
+</section>
+<section title="geminiclient.h" ref="geminiclient_8h.html">
+<section title="GeminiClient" ref="classGeminiClient.html">
+</section>
+</section>
+<section title="main.cpp" ref="main_8cpp.html">
+</section>
+<section title="mainwindow.cpp" ref="mainwindow_8cpp.html">
+<section title="PreventiveScoreVisual" ref="structPreventiveScoreVisual.html">
+</section>
+<section title="AiScoreUiStyle" ref="structAiScoreUiStyle.html">
+</section>
+</section>
+<section title="mainwindow.h" ref="mainwindow_8h.html">
+<section title="MainWindow" ref="classMainWindow.html">
+<section title="MainWindow" ref="classMainWindow.html#a996c5a2b6f77944776856f08ec30858d"/>
+<section title="~MainWindow" ref="classMainWindow.html#ae98d00a93bc118200eeef9f9bba1dba7"/>
+</section>
+</section>
+<section title="material.cpp" ref="material_8cpp.html">
+</section>
+<section title="material.h" ref="material_8h.html">
+<section title="Material" ref="classMaterial.html">
+</section>
+</section>
+<section title="smtpclient.cpp" ref="smtpclient_8cpp.html"/>
+<section title="smtpclient.h" ref="smtpclient_8h.html">
+<section title="SmtpClient" ref="classSmtpClient.html">
+<section title="SmtpClient" ref="classSmtpClient.html#ac9ad09132225066aad2f43bedf1f3431"/>
+<section title="setCredentials" ref="classSmtpClient.html#a36e508a9f8d507b07fb182343b7cf330"/>
+<section title="setHost" ref="classSmtpClient.html#a165668e828e6415b401f1285e006aa4e"/>
+<section title="setPort" ref="classSmtpClient.html#acbd7fb8420533fd42633178bdf65a998"/>
+</section>
+</section>
+</section>
+</section>
+</section>
+</toc>
+<keywords>
+<keyword name="AiScoreUiStyle" id="AiScoreUiStyle_" ref="structAiScoreUiStyle.html"/>
+<keyword name="Connection" id="Connection_" ref="classConnection.html"/>
+<keyword name="dotenv" id="dotenv_" ref="classdotenv.html"/>
+<keyword name="EmailDialog" id="EmailDialog_" ref="classEmailDialog.html"/>
+<keyword name="Employes" id="Employes_" ref="classEmployes.html"/>
+<keyword name="FaceTemplate" id="FaceTemplate_" ref="structFaceTemplate.html"/>
+<keyword name="GeminiClient" id="GeminiClient_" ref="classGeminiClient.html"/>
+<keyword name="MainWindow" id="MainWindow_" ref="classMainWindow.html"/>
+<keyword name="Material" id="Material_" ref="classMaterial.html"/>
+<keyword name="PreventiveScoreVisual" id="PreventiveScoreVisual_" ref="structPreventiveScoreVisual.html"/>
+<keyword name="SmtpClient" id="SmtpClient_" ref="classSmtpClient.html"/>
+<keyword name="README" id="README_" ref="md_README.html"/>
+<keyword name="afficher()" id="Employes::afficher_ae3023d1162cfdc5aa32ba34b321be237" ref="classEmployes.html#ae3023d1162cfdc5aa32ba34b321be237"/>
+<keyword name="ajoutCompte()" id="Employes::ajoutCompte_a3fec2854c338138fbb8089c6a2466b45" ref="classEmployes.html#a3fec2854c338138fbb8089c6a2466b45"/>
+<keyword name="ajouter()" id="Employes::ajouter_a6f9fc259296ce30f74cc6614aab5330f" ref="classEmployes.html#a6f9fc259296ce30f74cc6614aab5330f"/>
+<keyword name="ajoutReconaissanceFaciale(QByteArray data)" id="Employes::ajoutReconaissanceFaciale_a6eb10029a726df2848adddee22c28273" ref="classEmployes.html#a6eb10029a726df2848adddee22c28273"/>
+<keyword name="clearSessionToken(int id)" id="Employes::clearSessionToken_ae9c88af68d55d2b7b6f779c8c8c15fc6" ref="classEmployes.html#ae9c88af68d55d2b7b6f779c8c8c15fc6"/>
+<keyword name="createConnection()" id="Connection::createConnection_aa050b986119659a294b8deeda055e2a6" ref="classConnection.html#aa050b986119659a294b8deeda055e2a6"/>
+<keyword name="createInstance()" id="Connection::createInstance_a8f477c07930c870183e659c2fa1c87f6" ref="classConnection.html#a8f477c07930c870183e659c2fa1c87f6"/>
+<keyword name="EmailDialog(const QString &amp;reportText, QWidget *parent=nullptr)" id="EmailDialog::EmailDialog_ad6ffe0a4a738fd483f2520dad1d1ef91" ref="classEmailDialog.html#ad6ffe0a4a738fd483f2520dad1d1ef91"/>
+<keyword name="Employes()" id="Employes::Employes_a9f208ed1b8f632b49fcefd0ebef238d3" ref="classEmployes.html#a9f208ed1b8f632b49fcefd0ebef238d3"/>
+<keyword name="Employes(QString nom, QString prenom, QString tel=&quot;0&quot;, float heures=0, QDate date_recrutement=QDate::currentDate(), QDate date_naissance=QDate::currentDate(), QString role=&quot;&quot;, QString mdp=&quot;&quot;, QString mdp_hash=&quot;&quot;, int id_supervised=0, int id=-1)" id="Employes::Employes_a8523c64b43e4acefbcbb2d3256f76152" ref="classEmployes.html#a8523c64b43e4acefbcbb2d3256f76152"/>
+<keyword name="existanceCompte()" id="Employes::existanceCompte_a66dd6d9e291ea94be25da54a9a8277f9" ref="classEmployes.html#a66dd6d9e291ea94be25da54a9a8277f9"/>
+<keyword name="exportToCSV(QTableView *view, QString filePath)" id="Employes::exportToCSV_a18692539de0c3ff1cd0cbac5aa53e780" ref="classEmployes.html#a18692539de0c3ff1cd0cbac5aa53e780"/>
+<keyword name="genererStatistiquesHeures()" id="Employes::genererStatistiquesHeures_afdf536997a37b416f16d989dbfd73f94" ref="classEmployes.html#afdf536997a37b416f16d989dbfd73f94"/>
+<keyword name="genererStatistiquesNaissances()" id="Employes::genererStatistiquesNaissances_aedde2126bd9266e0bc4f8ca075bb6b26" ref="classEmployes.html#aedde2126bd9266e0bc4f8ca075bb6b26"/>
+<keyword name="genererStatistiquesRepartition()" id="Employes::genererStatistiquesRepartition_a91633d3aad98738519f8f66395abc510" ref="classEmployes.html#a91633d3aad98738519f8f66395abc510"/>
+<keyword name="getenv(const char *name, const std::string &amp;def=&quot;&quot;)" id="dotenv::getenv_aa95bd359a570e7505a8d69d129e601ac" ref="classdotenv.html#aa95bd359a570e7505a8d69d129e601ac"/>
+<keyword name="importCSV(QTableView *view)" id="Employes::importCSV_a430a466d19c293ab4d5920df83e85ca9" ref="classEmployes.html#a430a466d19c293ab4d5920df83e85ca9"/>
+<keyword name="init(const char *filename=&quot;.env&quot;)" id="dotenv::init_aa53249091e7caf40980aa3b169720d87" ref="classdotenv.html#aa53249091e7caf40980aa3b169720d87"/>
+<keyword name="init(int flags, const char *filename=&quot;.env&quot;)" id="dotenv::init_ae637cd49394f8ab9877a4cb5c91a8e33" ref="classdotenv.html#ae637cd49394f8ab9877a4cb5c91a8e33"/>
+<keyword name="MainWindow(QWidget *parent=nullptr)" id="MainWindow::MainWindow_a996c5a2b6f77944776856f08ec30858d" ref="classMainWindow.html#a996c5a2b6f77944776856f08ec30858d"/>
+<keyword name="modifier(int id)" id="Employes::modifier_a7355a7147ba7864424fd15bf875eee6f" ref="classEmployes.html#a7355a7147ba7864424fd15bf875eee6f"/>
+<keyword name="rechercher(QString nom)" id="Employes::rechercher_a84e544c78fd73c7de4f6176443f3dc92" ref="classEmployes.html#a84e544c78fd73c7de4f6176443f3dc92"/>
+<keyword name="recipientEmail() const" id="EmailDialog::recipientEmail_a1892dfb39ffca5f1fecec61ac8111440" ref="classEmailDialog.html#a1892dfb39ffca5f1fecec61ac8111440"/>
+<keyword name="saveSessionToken(const QString &amp;token, const QDate &amp;expiry, int userId)" id="Employes::saveSessionToken_ab619cf2f40a7f7cb8530d3925645b964" ref="classEmployes.html#ab619cf2f40a7f7cb8530d3925645b964"/>
+<keyword name="setCredentials(const QString &amp;user, const QString &amp;password)" id="SmtpClient::setCredentials_a36e508a9f8d507b07fb182343b7cf330" ref="classSmtpClient.html#a36e508a9f8d507b07fb182343b7cf330"/>
+<keyword name="setHost(const QString &amp;host)" id="SmtpClient::setHost_a165668e828e6415b401f1285e006aa4e" ref="classSmtpClient.html#a165668e828e6415b401f1285e006aa4e"/>
+<keyword name="setPort(quint16 port)" id="SmtpClient::setPort_acbd7fb8420533fd42633178bdf65a998" ref="classSmtpClient.html#acbd7fb8420533fd42633178bdf65a998"/>
+<keyword name="SmtpClient(QObject *parent=nullptr)" id="SmtpClient::SmtpClient_ac9ad09132225066aad2f43bedf1f3431" ref="classSmtpClient.html#ac9ad09132225066aad2f43bedf1f3431"/>
+<keyword name="supprimer(int id)" id="Employes::supprimer_aeed59b0f95cd1c69c03649e6ff1c1d21" ref="classEmployes.html#aeed59b0f95cd1c69c03649e6ff1c1d21"/>
+<keyword name="trier(QString choice)" id="Employes::trier_af636e8f8b10650f0445f518d0d24f7f9" ref="classEmployes.html#af636e8f8b10650f0445f518d0d24f7f9"/>
+<keyword name="validateSessionToken(const QString &amp;token, int id)" id="Employes::validateSessionToken_a7a56d63487ec84299aafa75a4f94c2ae" ref="classEmployes.html#a7a56d63487ec84299aafa75a4f94c2ae"/>
+<keyword name="~MainWindow()" id="MainWindow::~MainWindow_ae98d00a93bc118200eeef9f9bba1dba7" ref="classMainWindow.html#ae98d00a93bc118200eeef9f9bba1dba7"/>
+</keywords>
+<files>
+<file>annotated.html</file>
+<file>bc_s.png</file>
+<file>bc_sd.png</file>
+<file>classConnection-members.html</file>
+<file>classConnection.html</file>
+<file>classEmailDialog-members.html</file>
+<file>classEmailDialog.html</file>
+<file>classEmailDialog__coll__graph.png</file>
+<file>classEmailDialog__inherit__graph.png</file>
+<file>classEmployes-members.html</file>
+<file>classEmployes.html</file>
+<file>classGeminiClient-members.html</file>
+<file>classGeminiClient.html</file>
+<file>classGeminiClient__coll__graph.png</file>
+<file>classGeminiClient__inherit__graph.png</file>
+<file>classMainWindow-members.html</file>
+<file>classMainWindow.html</file>
+<file>classMainWindow__coll__graph.png</file>
+<file>classMainWindow__inherit__graph.png</file>
+<file>classMaterial-members.html</file>
+<file>classMaterial.html</file>
+<file>classSmtpClient-members.html</file>
+<file>classSmtpClient.html</file>
+<file>classSmtpClient__coll__graph.png</file>
+<file>classSmtpClient__inherit__graph.png</file>
+<file>classdotenv-members.html</file>
+<file>classdotenv.html</file>
+<file>classes.html</file>
+<file>closed.png</file>
+<file>connection_8cpp.html</file>
+<file>connection_8cpp__incl.png</file>
+<file>connection_8h.html</file>
+<file>connection_8h__dep__incl.png</file>
+<file>connection_8h__incl.png</file>
+<file>connection_8h_source.html</file>
+<file>dotenv_8h.html</file>
+<file>dotenv_8h__dep__incl.png</file>
+<file>dotenv_8h__incl.png</file>
+<file>dotenv_8h_source.html</file>
+<file>doxygen.css</file>
+<file>doxygen.svg</file>
+<file>dynsections.js</file>
+<file>emaildialog_8cpp.html</file>
+<file>emaildialog_8cpp__incl.png</file>
+<file>emaildialog_8h.html</file>
+<file>emaildialog_8h__dep__incl.png</file>
+<file>emaildialog_8h__incl.png</file>
+<file>emaildialog_8h_source.html</file>
+<file>employes_8cpp.html</file>
+<file>employes_8cpp__incl.png</file>
+<file>employes_8h.html</file>
+<file>employes_8h__dep__incl.png</file>
+<file>employes_8h__incl.png</file>
+<file>employes_8h_source.html</file>
+<file>files.html</file>
+<file>functions.html</file>
+<file>functions_func.html</file>
+<file>geminiclient_8cpp.html</file>
+<file>geminiclient_8cpp__incl.png</file>
+<file>geminiclient_8h.html</file>
+<file>geminiclient_8h__dep__incl.png</file>
+<file>geminiclient_8h__incl.png</file>
+<file>geminiclient_8h_source.html</file>
+<file>graph_legend.html</file>
+<file>graph_legend.png</file>
+<file>hierarchy.html</file>
+<file>index.html</file>
+<file>inherit_graph_0.png</file>
+<file>inherit_graph_1.png</file>
+<file>inherit_graph_2.png</file>
+<file>inherit_graph_3.png</file>
+<file>inherit_graph_4.png</file>
+<file>inherit_graph_5.png</file>
+<file>inherit_graph_6.png</file>
+<file>inherit_graph_7.png</file>
+<file>inherit_graph_8.png</file>
+<file>inherit_graph_9.png</file>
+<file>inherits.html</file>
+<file>jquery.js</file>
+<file>main_8cpp.html</file>
+<file>main_8cpp__incl.png</file>
+<file>mainwindow_8cpp.html</file>
+<file>mainwindow_8h.html</file>
+<file>mainwindow_8h__dep__incl.png</file>
+<file>mainwindow_8h__incl.png</file>
+<file>mainwindow_8h_source.html</file>
+<file>material_8cpp.html</file>
+<file>material_8cpp__incl.png</file>
+<file>material_8h.html</file>
+<file>material_8h__dep__incl.png</file>
+<file>material_8h__incl.png</file>
+<file>material_8h_source.html</file>
+<file>md_README.html</file>
+<file>menu.js</file>
+<file>menudata.js</file>
+<file>nav_f.png</file>
+<file>nav_fd.png</file>
+<file>nav_g.png</file>
+<file>nav_h.png</file>
+<file>nav_hd.png</file>
+<file>open.png</file>
+<file>pages.html</file>
+<file>search/all_0.js</file>
+<file>search/all_1.js</file>
+<file>search/all_2.js</file>
+<file>search/all_3.js</file>
+<file>search/all_4.js</file>
+<file>search/all_5.js</file>
+<file>search/all_6.js</file>
+<file>search/all_7.js</file>
+<file>search/all_8.js</file>
+<file>search/all_9.js</file>
+<file>search/all_a.js</file>
+<file>search/all_b.js</file>
+<file>search/all_c.js</file>
+<file>search/all_d.js</file>
+<file>search/all_e.js</file>
+<file>search/classes_0.js</file>
+<file>search/classes_1.js</file>
+<file>search/classes_2.js</file>
+<file>search/classes_3.js</file>
+<file>search/classes_4.js</file>
+<file>search/classes_5.js</file>
+<file>search/classes_6.js</file>
+<file>search/classes_7.js</file>
+<file>search/classes_8.js</file>
+<file>search/close.svg</file>
+<file>search/files_0.js</file>
+<file>search/files_1.js</file>
+<file>search/files_2.js</file>
+<file>search/files_3.js</file>
+<file>search/files_4.js</file>
+<file>search/files_5.js</file>
+<file>search/functions_0.js</file>
+<file>search/functions_1.js</file>
+<file>search/functions_2.js</file>
+<file>search/functions_3.js</file>
+<file>search/functions_4.js</file>
+<file>search/functions_5.js</file>
+<file>search/functions_6.js</file>
+<file>search/functions_7.js</file>
+<file>search/functions_8.js</file>
+<file>search/functions_9.js</file>
+<file>search/functions_a.js</file>
+<file>search/mag.svg</file>
+<file>search/mag_d.svg</file>
+<file>search/mag_sel.svg</file>
+<file>search/mag_seld.svg</file>
+<file>search/pages_0.js</file>
+<file>search/search.css</file>
+<file>search/search.js</file>
+<file>search/searchdata.js</file>
+<file>smtpclient_8cpp.html</file>
+<file>smtpclient_8cpp__incl.png</file>
+<file>smtpclient_8h.html</file>
+<file>smtpclient_8h__dep__incl.png</file>
+<file>smtpclient_8h__incl.png</file>
+<file>smtpclient_8h_source.html</file>
+<file>splitbar.png</file>
+<file>splitbard.png</file>
+<file>structAiScoreUiStyle-members.html</file>
+<file>structAiScoreUiStyle.html</file>
+<file>structFaceTemplate-members.html</file>
+<file>structFaceTemplate.html</file>
+<file>structPreventiveScoreVisual-members.html</file>
+<file>structPreventiveScoreVisual.html</file>
+<file>sync_off.png</file>
+<file>sync_on.png</file>
+<file>tab_a.png</file>
+<file>tab_ad.png</file>
+<file>tab_b.png</file>
+<file>tab_bd.png</file>
+<file>tab_h.png</file>
+<file>tab_hd.png</file>
+<file>tab_s.png</file>
+<file>tab_sd.png</file>
+<file>tabs.css</file>
+</files>
+</filterSection>
+</QtHelpProject>
