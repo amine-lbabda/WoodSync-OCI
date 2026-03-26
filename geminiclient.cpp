@@ -7,15 +7,12 @@
 #include <QJsonArray>
 #include <QUrl>
 #include <QRegularExpression>
-#include "dotenv.h"
-#include "qobject.h"
-#include <QString>
 
 // Clé API : variable d'environnement GEMINI_API_KEY (recommandé) ou remplir ci-dessous (ne pas commiter une vraie clé)
-const QString kGeminiApiKeyEmbedded = QString::fromUtf8(dotenv::getenv("GEMINI_API_KEY"));
+static const char *kGeminiApiKeyEmbedded = "AIzaSyAYJiXquODrbQpgLj1CKEexvG6t6Ye8nUg";
 
 // Alias « latest » (souvent meilleur quota / dispo que les ids versionnés sur le plan gratuit). Voir https://ai.google.dev/api/rest/v1beta/models
-const QString kGeminiModel = "gemini-flash-latest";
+static const char *kGeminiModel = "gemini-flash-latest";
 
 QString GeminiClient::apiKeyFromEnvironment()
 {
@@ -23,8 +20,8 @@ QString GeminiClient::apiKeyFromEnvironment()
     const QByteArray env = qgetenv("GEMINI_API_KEY");
     if (!env.isEmpty())
         key = QString::fromUtf8(env).trimmed();
-    else if (!kGeminiApiKeyEmbedded.isEmpty() && kGeminiApiKeyEmbedded[0] != '\0')
-        key = kGeminiApiKeyEmbedded;
+    else if (kGeminiApiKeyEmbedded && kGeminiApiKeyEmbedded[0] != '\0')
+        key = QString::fromUtf8(kGeminiApiKeyEmbedded).trimmed();
     else
         return QString();
     // Faute fréquente : « l » minuscule au lieu de « I » majuscule dans « AIza »
@@ -221,7 +218,9 @@ void GeminiClient::analyzeMachine(const QVariantMap &machineData)
         return;
     }
 
-    QUrl url(QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/%1:generateContent").arg(kGeminiModel));
+    qDebug() << "[GEMINI] analyzeMachine called with machine data";
+
+    QUrl url(QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/%1:generateContent").arg(QLatin1String(kGeminiModel)));
 
     QJsonObject userPart;
     userPart.insert("text", buildPrompt(machineData));
@@ -243,6 +242,7 @@ void GeminiClient::analyzeMachine(const QVariantMap &machineData)
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     req.setRawHeader(QByteArrayLiteral("X-goog-api-key"), apiKey.toUtf8());
 
+    qDebug() << "[GEMINI] Sending request to Gemini API...";
     m_reply = m_nam.post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
     connect(m_reply, &QNetworkReply::finished, this, &GeminiClient::onReplyFinished);
 }
@@ -259,18 +259,23 @@ void GeminiClient::onReplyFinished()
     const int httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const QNetworkReply::NetworkError netErr = reply->error();
 
+    qDebug() << "[GEMINI] onReplyFinished called - httpStatus:" << httpStatus << "netErr:" << netErr << "raw length:" << raw.length();
+
     int score = 0;
     QString risk, comment, err;
 
     // Toujours tenter d'analyser le corps si présent (ignore une erreur Qt fantôme quand HTTP = OK)
     if (!raw.isEmpty()) {
         if (parseGeminiResponse(raw, &score, &risk, &comment, &err)) {
+            qDebug() << "[GEMINI] Successfully parsed response - score:" << score << "risk:" << risk << "comment:" << comment;
+            qDebug() << "[GEMINI] Emitting analysisComplete signal";
             emit analysisComplete(score, risk, comment);
             return;
         }
     }
 
     if (!err.isEmpty()) {
+        qDebug() << "[GEMINI] Parse error:" << err;
         if (netErr != QNetworkReply::NoError)
             emit analysisFailed(tr("%1\n(%2)").arg(err, reply->errorString()));
         else
@@ -279,6 +284,7 @@ void GeminiClient::onReplyFinished()
     }
 
     if (httpStatus > 0 && httpStatus != 200) {
+        qDebug() << "[GEMINI] HTTP error:" << httpStatus;
         emit analysisFailed(tr("Erreur HTTP %1").arg(httpStatus));
         return;
     }

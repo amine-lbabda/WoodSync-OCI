@@ -59,13 +59,11 @@
 #include <QtGlobal>
 // EmailDialog implementation moved to emaildialog.h/emaildialog.cpp
 
-namespace {
 // stackedwidget order in mainwindow.ui:
 // 0 LoginPage, 1 CreateAccountPage, 2 GestionStockPage, 3 GestionEmployePage,
 // 4 GestionCommandesPage, 5 GestionProduitsPage, 6 GestionReclamationsPage,
 // 7 GestionMaterielPage, 8 AjouterMaterielPage, 9 StatistiquePAge, 10 AI_F.
-constexpr int kStackedIndexAiAnalysisPage = 10;
-} // namespace
+static constexpr int kStackedIndexAiAnalysisPage = 10;
 
 struct PreventiveScoreVisual {
     QString text;
@@ -221,7 +219,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_editingMaterialId(-1)
     , ui(new Ui::MainWindow)
+    , m_geminiClient(this)
 {
+    qDebug() << "[CONSTRUCTOR] MainWindow constructor started";
     loadFaceRegistry();
     ignore = run([this](){
         detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, DNN_BACKEND_CUDA, DNN_TARGET_CUDA);
@@ -237,6 +237,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableMaterials->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableMaterials->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableMaterials->setColumnHidden(0, true); // ID auto-incrementé, pas affiché
+
+    // Initialize report TextEdit early
+    if (ui->rapport_f) {
+        m_rapportTextEdit = new QTextEdit(ui->rapport_f);
+        m_rapportTextEdit->setObjectName("texte_rapport");
+        m_rapportTextEdit->setReadOnly(true);
+        m_rapportTextEdit->setPlaceholderText(tr("Sélectionnez une machine dans le tableau puis cliquez sur \"Generer\" pour afficher le rapport."));
+        m_rapportTextEdit->setStyleSheet("QTextEdit { font-family: 'Roboto Condensed'; font-size: 13px; padding: 8px; border: 1px solid #7F5539; border-radius: 6px; background: #fdfefe; }");
+        QVBoxLayout *rapportLayout = new QVBoxLayout(ui->rapport_f);
+        rapportLayout->setContentsMargins(4, 4, 4, 4);
+        rapportLayout->addWidget(m_rapportTextEdit);
+    }
 
     // Initialize material filters at startup (not only after employee stats are opened).
     ui->comboStatus_2->clear();
@@ -446,18 +458,9 @@ void MainWindow::generatePie()
     // env_rapport : connexion explicite (évite double exécution comme pour modif_ai).
 
     // Bouton "Générer" du cadre rapport : objectName gen_rapport ≠ BtnAjouter_27 → connexion explicite requise.
-    connect(ui->gen_rapport, &QPushButton::clicked, this, &MainWindow::on_BtnAjouter_27_clicked);
-    connect(ui->env_rapport, &QPushButton::clicked, this, &MainWindow::openEmailReportDialog, Qt::UniqueConnection);
+    connect(ui->env_rapport, &QPushButton::clicked, this, &MainWindow::openEmailReportDialog);
 
-    // Zone d'affichage du rapport dans rapport_f
-    m_rapportTextEdit = new QTextEdit(ui->rapport_f);
-    m_rapportTextEdit->setObjectName("texte_rapport");
-    m_rapportTextEdit->setReadOnly(true);
-    m_rapportTextEdit->setPlaceholderText(tr("Sélectionnez une machine dans le tableau puis cliquez sur \"Generer\" pour afficher le rapport."));
-    m_rapportTextEdit->setStyleSheet("QTextEdit { font-family: 'Roboto Condensed'; font-size: 13px; padding: 8px; border: 1px solid #7F5539; border-radius: 6px; background: #fdfefe; }");
-    QVBoxLayout *rapportLayout = new QVBoxLayout(ui->rapport_f);
-    rapportLayout->setContentsMargins(4, 4, 4, 4);
-    rapportLayout->addWidget(m_rapportTextEdit);
+    // Zone d'affichage du rapport dans rapport_f — déjà initialisée dans le constructeur.
 
     // Charte graphique du formulaire matériels (même style que les autres formulaires)
     const QString formCharte(
@@ -563,30 +566,11 @@ void MainWindow::generatePie()
     ui->tableMaterials_2->horizontalHeader()->setMinimumSectionSize(80);
     ui->tableMaterials_2->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableMaterials_2->setSelectionMode(QAbstractItemView::SingleSelection);
-    setupAiAnalysisUi();
-    connect(&m_geminiClient, &GeminiClient::analysisComplete, this, [this](int score, const QString &risk, const QString &comment) {
-        m_aiAnalysisBusy = false;
-        ui->gen_rapport_AI->setEnabled(true);
-        ui->modif_ai->setEnabled(true);
-        setAiTableButtonsEnabled(true);
-        m_aiPendingScore = score;
-        m_aiPendingRisk = risk;
-        m_aiPendingComment = comment;
-        updateAiResultsPanel(score, risk, comment);
-        if (m_aiStatusLabel)
-            m_aiStatusLabel->setText(tr("Analyse terminée. Vérifiez les résultats puis cliquez sur « Enregistrer l'analyse »."));
-    });
-    connect(&m_geminiClient, &GeminiClient::analysisFailed, this, [this](const QString &err) {
-        m_aiAnalysisBusy = false;
-        ui->gen_rapport_AI->setEnabled(true);
-        setAiTableButtonsEnabled(true);
-        if (m_aiStatusLabel)
-            m_aiStatusLabel->setText(tr("Échec de l'analyse."));
-        QMessageBox::warning(this, tr("Analyse IA"), err);
-    });
+    // Note: Signal connections for m_geminiClient are set up in openAiAnalysisPage()
+    // when the AI analysis page is first opened, not here in the constructor
     // export_3, gen_rapport_AI : connectSlotsByName uniquement.
-    // modif_ai : pas de slot on_modif_ai_clicked (évite double connexion) — connexion explicite unique.
-    connect(ui->modif_ai, &QPushButton::clicked, this, &MainWindow::saveAiAnalysisResults, Qt::UniqueConnection);
+    // modif_ai connection is set in openAiAnalysisPage() to guarantee hookup
+    // when the AI page is actually opened.
     ui->modif_ai->setEnabled(false);
     ui->Pie->setRenderHint(QPainter::Antialiasing);
     ui->Pie->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -633,6 +617,10 @@ MainWindow::~MainWindow()
     }
 
 }
+
+// =========================
+// Material Domain Functions
+// =========================
 
 void MainWindow::on_GestionStock_clicked()
 {
@@ -759,7 +747,7 @@ void MainWindow::loadMachines()
     if (!fetchError.isEmpty()) {
         QApplication::restoreOverrideCursor();
         ui->tableMaterials->setUpdatesEnabled(true);
-        QMessageBox::critical(this, tr("Erreur"), tr("Impossible de charger les machines: ") + fetchError);
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Impossible de charger les machines: ") + fetchError);
         return;
     }
 
@@ -813,7 +801,7 @@ void MainWindow::loadLast5Machines()
     const QList<Material> latest = Material::fetchLatest(5, &fetchError);
     if (!fetchError.isEmpty()) {
         qWarning() << "loadLast5Machines:" << fetchError;
-        QMessageBox::warning(this, tr("Données"),
+        QMessageBox::warning(nullptr, tr("Données"),
                              tr("Impossible de charger les dernières machines : %1").arg(fetchError));
         return;
     }
@@ -850,7 +838,7 @@ void MainWindow::showMaterialActionDetails()
     Material mat;
     QString fetchError;
     if (!Material::fetchById(id, &mat, &fetchError)) {
-        QMessageBox::critical(this, tr("Erreur"), tr("Impossible de charger les détails: ") + fetchError);
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Impossible de charger les détails: ") + fetchError);
         return;
     }
 
@@ -948,7 +936,7 @@ void MainWindow::on_export_2_clicked()
 
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, tr("Erreur"), tr("Impossible d'écrire le fichier CSV."));
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Impossible d'écrire le fichier CSV."));
         return;
     }
 
@@ -982,7 +970,7 @@ void MainWindow::on_export_2_clicked()
     }
 
     file.close();
-    QMessageBox::information(this, tr("Succès"), tr("Export CSV terminé avec succès."));
+    QMessageBox::information(nullptr, tr("Succès"), tr("Export CSV terminé avec succès."));
 }
 
 void MainWindow::on_import_f_clicked()
@@ -995,11 +983,11 @@ void MainWindow::on_import_f_clicked()
     QString err;
     int n = 0;
     if (!Material::importFromCsvFile(path, &err, &n)) {
-        QMessageBox::warning(this, tr("Fichier non supportable"), err);
+        QMessageBox::warning(nullptr, tr("Fichier non supportable"), err);
         return;
     }
 
-    QMessageBox::information(this, tr("Import"), tr("%1 ligne(s) importée(s).").arg(n));
+    QMessageBox::information(nullptr, tr("Import"), tr("%1 ligne(s) importée(s).").arg(n));
     loadMachines();
     loadLast5Machines();
 }
@@ -1018,25 +1006,25 @@ void MainWindow::on_btnSave_2_clicked()
     const int nbIncidents = ui->spinNbIncidents_2->value();
 
     if (nom.isEmpty()) {
-        QMessageBox::warning(this, tr("Champ requis"), tr("Veuillez saisir le nom du matériel."));
+        QMessageBox::warning(nullptr, tr("Champ requis"), tr("Veuillez saisir le nom du matériel."));
         ui->btnSave_2->setEnabled(true);
         return;
     }
 
     if (ui->comboWorkshop_4->currentIndex() <= 0 || atelier.isEmpty()) {
-        QMessageBox::warning(this, tr("Champ requis"), tr("Veuillez sélectionner un atelier."));
+        QMessageBox::warning(nullptr, tr("Champ requis"), tr("Veuillez sélectionner un atelier."));
         ui->btnSave_2->setEnabled(true);
         return;
     }
 
     if (etatSante.isEmpty()) {
-        QMessageBox::warning(this, tr("Champ requis"), tr("Veuillez sélectionner l'état de santé."));
+        QMessageBox::warning(nullptr, tr("Champ requis"), tr("Veuillez sélectionner l'état de santé."));
         ui->btnSave_2->setEnabled(true);
         return;
     }
 
     if (!dateDernierEntretien.isValid() || !dateAchat.isValid()) {
-        QMessageBox::warning(this, tr("Date invalide"), tr("Veuillez vérifier les dates (format yyyy-MM-dd)."));
+        QMessageBox::warning(nullptr, tr("Date invalide"), tr("Veuillez vérifier les dates (format yyyy-MM-dd)."));
         ui->btnSave_2->setEnabled(true);
         return;
     }
@@ -1053,7 +1041,7 @@ void MainWindow::on_btnSave_2_clicked()
     material.setNombreIncidents(nbIncidents);
 
     if (m_editingMaterialId < 0) {
-        QMessageBox::StandardButton btn = QMessageBox::question(this, tr("Confirmation"),
+        QMessageBox::StandardButton btn = QMessageBox::question(nullptr, tr("Confirmation"),
             tr("Confirmer l'ajout de cette machine ?"),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
         if (btn != QMessageBox::Yes) {
@@ -1065,15 +1053,15 @@ void MainWindow::on_btnSave_2_clicked()
 
         QString dbError;
         if (!material.insert(&dbError)) {
-            QMessageBox::critical(this, tr("Erreur"), tr("Échec de l'ajout: ") + dbError);
+            QMessageBox::critical(nullptr, tr("Erreur"), tr("Échec de l'ajout: ") + dbError);
             QApplication::restoreOverrideCursor();
             ui->btnSave_2->setEnabled(true);
             return;
         }
         QApplication::restoreOverrideCursor();
-        QMessageBox::information(this, tr("Succès"), tr("Machine ajoutée avec succès."));
+        QMessageBox::information(nullptr, tr("Succès"), tr("Machine ajoutée avec succès."));
     } else {
-        QMessageBox::StandardButton btn = QMessageBox::question(this, tr("Confirmation"),
+        QMessageBox::StandardButton btn = QMessageBox::question(nullptr, tr("Confirmation"),
             tr("Confirmez la modification de cette machine ?"),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
         if (btn != QMessageBox::Yes) {
@@ -1086,13 +1074,13 @@ void MainWindow::on_btnSave_2_clicked()
         material.setIdMateriel(m_editingMaterialId);
         QString dbError;
         if (!material.update(&dbError)) {
-            QMessageBox::critical(this, tr("Erreur"), tr("Échec de la modification: ") + dbError);
+            QMessageBox::critical(nullptr, tr("Erreur"), tr("Échec de la modification: ") + dbError);
             QApplication::restoreOverrideCursor();
             ui->btnSave_2->setEnabled(true);
             return;
         }
         QApplication::restoreOverrideCursor();
-        QMessageBox::information(this, tr("Succès"), tr("Machine modifiée avec succès."));
+        QMessageBox::information(nullptr, tr("Succès"), tr("Machine modifiée avec succès."));
     }
 
     clearMachineForm();
@@ -1107,12 +1095,12 @@ void MainWindow::on_modifier_m_clicked()
 {
     int row = ui->tableMaterials->currentRow();
     if (row < 0) {
-        QMessageBox::warning(this, tr("Sélection"), tr("Veuillez sélectionner une ligne (machine) dans le tableau avant de cliquer Modifier."));
+        QMessageBox::warning(nullptr, tr("Sélection"), tr("Veuillez sélectionner une ligne (machine) dans le tableau avant de cliquer Modifier."));
         return;
     }
     QTableWidgetItem *idItem = ui->tableMaterials->item(row, 0);
     if (!idItem) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Ligne invalide."));
+        QMessageBox::warning(nullptr, tr("Erreur"), tr("Ligne invalide."));
         return;
     }
     int id = idItem->data(Qt::UserRole).toInt();
@@ -1120,7 +1108,7 @@ void MainWindow::on_modifier_m_clicked()
         bool ok = false;
         id = idItem->text().toInt(&ok);
         if (!ok || id <= 0) {
-            QMessageBox::warning(this, tr("Erreur"), tr("ID machine invalide."));
+            QMessageBox::warning(nullptr, tr("Erreur"), tr("ID machine invalide."));
             return;
         }
     }
@@ -1146,7 +1134,7 @@ void MainWindow::on_supprimer_m_clicked()
 {
     int row = ui->tableMaterials->currentRow();
     if (row < 0) {
-        QMessageBox::warning(this, tr("Sélection"), tr("Veuillez sélectionner une ligne (machine) dans le tableau avant de cliquer Supprimer."));
+        QMessageBox::warning(nullptr, tr("Sélection"), tr("Veuillez sélectionner une ligne (machine) dans le tableau avant de cliquer Supprimer."));
         return;
     }
     QTableWidgetItem *idItem = ui->tableMaterials->item(row, 0);
@@ -1157,16 +1145,16 @@ void MainWindow::on_supprimer_m_clicked()
         id = idItem->text().toInt(&ok);
         if (!ok || id <= 0) return;
     }
-    QMessageBox::StandardButton btn = QMessageBox::question(this, tr("Confirmation"),
+    QMessageBox::StandardButton btn = QMessageBox::question(nullptr, tr("Confirmation"),
         tr("Confirmer la suppression de cette machine ?"),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
     if (btn != QMessageBox::Yes) return;
     QString dbError;
     if (!Material::removeById(id, &dbError)) {
-        QMessageBox::critical(this, tr("Erreur"), tr("Échec de la suppression: ") + dbError);
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Échec de la suppression: ") + dbError);
         return;
     }
-    QMessageBox::information(this, tr("Succès"), tr("Machine supprimée avec succès."));
+    QMessageBox::information(nullptr, tr("Succès"), tr("Machine supprimée avec succès."));
     loadMachines();
 }
 
@@ -1277,17 +1265,17 @@ void MainWindow::on_retour_2_clicked()
     ui->stackedwidget->setCurrentIndex(7);
 }
 
-void MainWindow::on_BtnAjouter_27_clicked()
+void MainWindow::on_gen_rapport_clicked()
 {
     const int row = ui->tableMaterials->currentRow();
     if (row < 0) {
-        QMessageBox::information(this, tr("Rapport"), tr("Veuillez sélectionner une machine dans le tableau avant de générer le rapport."));
+        QMessageBox::information(nullptr, tr("Rapport"), tr("Veuillez sélectionner une machine dans le tableau avant de générer le rapport."));
         return;
     }
 
     QTableWidgetItem *idItem = ui->tableMaterials->item(row, 0);
     if (!idItem) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Impossible d'identifier la machine sélectionnée."));
+        QMessageBox::warning(nullptr, tr("Erreur"), tr("Impossible d'identifier la machine sélectionnée."));
         return;
     }
 
@@ -1298,7 +1286,7 @@ void MainWindow::on_BtnAjouter_27_clicked()
     Material mat;
     QString fetchError;
     if (!Material::fetchById(idMat, &mat, &fetchError)) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Impossible de charger les données de la machine."));
+        QMessageBox::warning(nullptr, tr("Erreur"), tr("Impossible de charger les données de la machine."));
         return;
     }
 
@@ -1351,20 +1339,28 @@ void MainWindow::on_BtnAjouter_27_clicked()
     bodyEscaped.replace(QLatin1String("\n"), QLatin1String("<br>"));
     QString html = QStringLiteral("<html><head><style>%1</style></head><body><div class=\"report-box\"><h2>Rapport machine</h2><p>%2</p></div></body></html>")
                       .arg(reportStyle, bodyEscaped);
-    m_rapportTextEdit->setHtml(html);
+    if (m_rapportTextEdit)
+        m_rapportTextEdit->setHtml(html);
 }
 
 void MainWindow::openEmailReportDialog()
 {
+    if (!m_rapportTextEdit)
+        return;
     QString reportText = m_rapportTextEdit->toPlainText().trimmed();
     if (reportText.isEmpty()) {
-        QMessageBox::information(this, tr("Rapport vide"),
+        QMessageBox::information(nullptr, tr("Rapport vide"),
             tr("Générez d'abord un rapport (sélectionnez une machine puis cliquez sur \"Generer\") avant d'envoyer par e-mail."));
         return;
     }
     EmailDialog dlg(reportText, this);
     dlg.exec();
 }
+
+// =========================
+// Employee Domain Functions
+// =========================
+
 void MainWindow::on_BtnLogin_clicked()
 {
     QString nom = ui->NomLoginMenuisier->text();
@@ -2135,10 +2131,33 @@ void MainWindow::on_StatPrev_clicked()
     ui->Stats->setCurrentIndex(currentIndex-1);
 }
 
+// ====================
+// AI Material Functions
+// ====================
+
 void MainWindow::setupAiAnalysisUi()
 {
-    if (ui->rapport_ai->layout())
+    if (!ui || !ui->rapport_ai) {
         return;
+    }
+    
+    // Clear any existing layout to ensure fresh UI
+    if (QLayout *existingLayout = ui->rapport_ai->layout()) {
+        QLayoutItem *item;
+        while ((item = existingLayout->takeAt(0)) != nullptr) {
+            if (item->widget())
+                delete item->widget();
+            delete item;
+        }
+        delete existingLayout;
+    }
+    
+    // Reset member pointers as they're about to be recreated
+    m_aiStatusLabel = nullptr;
+    m_aiScoreBar = nullptr;
+    m_aiScoreValue = nullptr;
+    m_aiRiskBadge = nullptr;
+    m_aiCommentLabel = nullptr;
 
     auto addSeparator = [](QVBoxLayout *l) {
         l->addSpacing(6);
@@ -2251,20 +2270,45 @@ void MainWindow::clearAiResultsPanel()
 
 void MainWindow::updateAiResultsPanel(int score, const QString &risk, const QString &comment)
 {
+    qDebug() << "[UPDATE_UI] updateAiResultsPanel called - score:" << score << "risk:" << risk << "comment:" << comment;
     const int bounded = qBound(0, score, 100);
-    if (m_aiScoreBar)
+    if (m_aiScoreBar) {
+        qDebug() << "[UPDATE_UI] Setting score bar value to:" << bounded;
         m_aiScoreBar->setValue(bounded);
-    if (m_aiScoreValue)
+    } else {
+        qDebug() << "[UPDATE_UI] ERROR: m_aiScoreBar is NULL!";
+    }
+    if (m_aiScoreValue) {
+        qDebug() << "[UPDATE_UI] Setting score value text to:" << bounded;
         m_aiScoreValue->setText(QString::number(bounded));
-    if (m_aiRiskBadge)
+    } else {
+        qDebug() << "[UPDATE_UI] ERROR: m_aiScoreValue is NULL!";
+    }
+    if (m_aiRiskBadge) {
+        qDebug() << "[UPDATE_UI] Setting risk badge text to:" << risk;
         m_aiRiskBadge->setText(risk.isEmpty() ? QStringLiteral("—") : risk);
+    } else {
+        qDebug() << "[UPDATE_UI] ERROR: m_aiRiskBadge is NULL!";
+    }
     applyPreventiveScoreAppearance(m_aiScoreBar, m_aiScoreValue, m_aiRiskBadge, bounded, false);
-    if (m_aiCommentLabel)
+    if (m_aiCommentLabel) {
+        qDebug() << "[UPDATE_UI] Setting comment text to:" << comment;
         m_aiCommentLabel->setText(comment.isEmpty() ? QStringLiteral("—") : comment);
+    } else {
+        qDebug() << "[UPDATE_UI] ERROR: m_aiCommentLabel is NULL!";
+    }
 }
 
 void MainWindow::openAiAnalysisPage()
 {
+    setupAiAnalysisUi();
+    qDebug() << "[OPEN_AI_PAGE] Setting up Gemini signal connections";
+    bool connected1 = connect(&m_geminiClient, &GeminiClient::analysisComplete, this, &MainWindow::onGeminiAnalysisComplete, Qt::DirectConnection);
+    bool connected2 = connect(&m_geminiClient, &GeminiClient::analysisFailed, this, &MainWindow::onGeminiAnalysisFailed, Qt::DirectConnection);
+    bool connectedSave = connect(ui->modif_ai, &QPushButton::clicked, this, &MainWindow::saveAiAnalysisResults, Qt::UniqueConnection);
+    qDebug() << "[OPEN_AI_PAGE] analysisComplete connected:" << connected1;
+    qDebug() << "[OPEN_AI_PAGE] analysisFailed connected:" << connected2;
+    qDebug() << "[OPEN_AI_PAGE] modif_ai connected:" << connectedSave;
     ui->stackedwidget->setCurrentIndex(kStackedIndexAiAnalysisPage);
     loadAiMachinesTable();
     clearAiResultsPanel();
@@ -2282,6 +2326,10 @@ void MainWindow::on_fen_ai_clicked()
 void MainWindow::loadAiMachinesTable()
 {
     QTableWidget *t = ui->tableMaterials_2;
+    if (!t) {
+        QMessageBox::warning(nullptr, tr("Erreur"), tr("Table machines AI non initialisée."));
+        return;
+    }
     t->setUpdatesEnabled(false);
     t->setSortingEnabled(false);
     t->setRowCount(0);
@@ -2295,7 +2343,7 @@ void MainWindow::loadAiMachinesTable()
     const QList<Material> materials = Material::fetchAllById(&fetchError);
     if (!fetchError.isEmpty()) {
         t->setUpdatesEnabled(true);
-        QMessageBox::critical(this, tr("Erreur"), tr("Impossible de charger les machines : ") + fetchError);
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Impossible de charger les machines : ") + fetchError);
         return;
     }
 
@@ -2338,6 +2386,7 @@ void MainWindow::loadAiMachinesTable()
 void MainWindow::setAiTableButtonsEnabled(bool enabled)
 {
     QTableWidget *t = ui->tableMaterials_2;
+    if (!t) return;
     for (int r = 0; r < t->rowCount(); ++r) {
         if (QWidget *w = t->cellWidget(r, 11))
             if (auto *b = qobject_cast<QPushButton *>(w))
@@ -2356,19 +2405,25 @@ Material MainWindow::fetchMachineDataForAi(int id)
 
 void MainWindow::startAiAnalysisForMaterialId(int materialId)
 {
+    qDebug() << "[ANALYSIS_START] startAiAnalysisForMaterialId called with materialId:" << materialId;
     if (m_aiAnalysisBusy) {
-        QMessageBox::information(this, tr("Analyse IA"), tr("Une analyse est déjà en cours. Veuillez patienter."));
+        qDebug() << "[ANALYSIS_START] Analysis already busy, aborting";
+        QMessageBox::information(nullptr, tr("Analyse IA"), tr("Une analyse est déjà en cours. Veuillez patienter."));
         return;
     }
-    if (materialId <= 0)
+    if (materialId <= 0) {
+        qDebug() << "[ANALYSIS_START] Invalid materialId, aborting";
         return;
+    }
 
     Material material = fetchMachineDataForAi(materialId);
     if (!material.isValid()) {
-        QMessageBox::warning(this, tr("Analyse IA"), tr("Impossible de charger les données de cette machine."));
+        qDebug() << "[ANALYSIS_START] Material data invalid, aborting";
+        QMessageBox::warning(nullptr, tr("Analyse IA"), tr("Impossible de charger les données de cette machine."));
         return;
     }
 
+    qDebug() << "[ANALYSIS_START] Material data loaded successfully";
     m_aiPendingMaterialId = materialId;
     m_aiAnalysisBusy = true;
     ui->gen_rapport_AI->setEnabled(false);
@@ -2380,6 +2435,7 @@ void MainWindow::startAiAnalysisForMaterialId(int materialId)
     if (m_aiCommentLabel)
         m_aiCommentLabel->setText(tr("Veuillez patienter."));
 
+    qDebug() << "[ANALYSIS_START] Calling m_geminiClient.analyzeMachine()";
     m_geminiClient.analyzeMachine(material.toVariantMap());
 }
 
@@ -2387,12 +2443,12 @@ void MainWindow::on_gen_rapport_AI_clicked()
 {
     const int row = ui->tableMaterials_2->currentRow();
     if (row < 0) {
-        QMessageBox::information(this, tr("Analyse IA"), tr("Sélectionnez d'abord une ligne dans le tableau."));
+        QMessageBox::information(nullptr, tr("Analyse IA"), tr("Sélectionnez d'abord une ligne dans le tableau."));
         return;
     }
     QTableWidgetItem *idItem = ui->tableMaterials_2->item(row, 0);
     if (!idItem) {
-        QMessageBox::warning(this, tr("Analyse IA"), tr("Impossible d'identifier la machine sélectionnée."));
+        QMessageBox::warning(nullptr, tr("Analyse IA"), tr("Impossible d'identifier la machine sélectionnée."));
         return;
     }
     int id = idItem->data(Qt::UserRole).toInt();
@@ -2401,9 +2457,41 @@ void MainWindow::on_gen_rapport_AI_clicked()
     startAiAnalysisForMaterialId(id);
 }
 
+void MainWindow::onGeminiAnalysisComplete(int score, const QString &risk, const QString &comment)
+{
+    qDebug() << "[SLOT] onGeminiAnalysisComplete called - score:" << score << "risk:" << risk << "comment:" << comment;
+    qDebug() << "[SLOT] m_aiScoreBar is:" << (m_aiScoreBar ? "valid" : "NULL");
+    qDebug() << "[SLOT] m_aiScoreValue is:" << (m_aiScoreValue ? "valid" : "NULL");
+    qDebug() << "[SLOT] m_aiRiskBadge is:" << (m_aiRiskBadge ? "valid" : "NULL");
+    qDebug() << "[SLOT] m_aiCommentLabel is:" << (m_aiCommentLabel ? "valid" : "NULL");
+    
+    m_aiAnalysisBusy = false;
+    ui->gen_rapport_AI->setEnabled(true);
+    ui->modif_ai->setEnabled(true);
+    setAiTableButtonsEnabled(true);
+    m_aiPendingScore = score;
+    m_aiPendingRisk = risk;
+    m_aiPendingComment = comment;
+    updateAiResultsPanel(score, risk, comment);
+    if (m_aiStatusLabel)
+        m_aiStatusLabel->setText(tr("Analyse terminée. Vérifiez les résultats puis cliquez sur « Enregistrer l'analyse »."));
+}
+
+void MainWindow::onGeminiAnalysisFailed(const QString &error)
+{
+    qDebug() << "[SLOT] onGeminiAnalysisFailed called - error:" << error;
+    m_aiAnalysisBusy = false;
+    ui->gen_rapport_AI->setEnabled(true);
+    setAiTableButtonsEnabled(true);
+    if (m_aiStatusLabel)
+        m_aiStatusLabel->setText(tr("Échec de l'analyse."));
+    QMessageBox::warning(nullptr, tr("Analyse IA"), error);
+}
+
 void MainWindow::updateAiTableRowForMaterial(int materialId, int score, const QString &risk, const QString &comment)
 {
     QTableWidget *t = ui->tableMaterials_2;
+    if (!t) return;
     for (int r = 0; r < t->rowCount(); ++r) {
         QTableWidgetItem *idItem = t->item(r, 0);
         if (!idItem) continue;
@@ -2424,8 +2512,9 @@ void MainWindow::updateAiTableRowForMaterial(int materialId, int score, const QS
 
 void MainWindow::saveAiAnalysisResults()
 {
+    qDebug() << "[SAVE_AI] saveAiAnalysisResults clicked. pending material id:" << m_aiPendingMaterialId;
     if (m_aiPendingMaterialId <= 0) {
-        QMessageBox::information(this, tr("Analyse IA"), tr("Aucun résultat d'analyse à enregistrer. Lancez d'abord une analyse."));
+        QMessageBox::information(nullptr, tr("Analyse IA"), tr("Aucun résultat d'analyse à enregistrer. Lancez d'abord une analyse."));
         return;
     }
 
@@ -2438,7 +2527,7 @@ void MainWindow::saveAiAnalysisResults()
             riskPanneLabelToOracleCode(m_aiPendingRisk),
             m_aiPendingComment,
             &dbError)) {
-        QMessageBox::critical(this, tr("Erreur"), tr("Échec de la mise à jour : ") + dbError);
+        QMessageBox::critical(nullptr, tr("Erreur"), tr("Échec de la mise à jour : ") + dbError);
         ui->modif_ai->setEnabled(true);
         return;
     }
@@ -2449,6 +2538,6 @@ void MainWindow::saveAiAnalysisResults()
 
     if (m_aiStatusLabel)
         m_aiStatusLabel->setText(tr("Indicateurs enregistrés en base pour la machine #%1.").arg(m_aiPendingMaterialId));
-    QMessageBox::information(this, tr("Analyse IA"), tr("Les indicateurs ont été enregistrés."));
+    QMessageBox::information(nullptr, tr("Analyse IA"), tr("Les indicateurs ont été enregistrés."));
     m_aiPendingMaterialId = -1;
 }
