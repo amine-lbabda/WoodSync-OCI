@@ -1,5 +1,5 @@
 #include "geminiclient.h"
-
+#include "dotenv.h"
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QJsonDocument>
@@ -9,10 +9,10 @@
 #include <QRegularExpression>
 
 // Clé API : variable d'environnement GEMINI_API_KEY (recommandé) ou remplir ci-dessous (ne pas commiter une vraie clé)
-static const char *kGeminiApiKeyEmbedded = "AIzaSyAYJiXquODrbQpgLj1CKEexvG6t6Ye8nUg";
+static const QString kGeminiApiKeyEmbedded = QString::fromUtf8(dotenv::getenv("GEMINI_API_KEY"));
 
 // Alias « latest » (souvent meilleur quota / dispo que les ids versionnés sur le plan gratuit). Voir https://ai.google.dev/api/rest/v1beta/models
-static const char *kGeminiModel = "gemini-flash-latest";
+static const QString kGeminiModel = "gemini-flash-latest";
 
 QString GeminiClient::apiKeyFromEnvironment()
 {
@@ -20,8 +20,8 @@ QString GeminiClient::apiKeyFromEnvironment()
     const QByteArray env = qgetenv("GEMINI_API_KEY");
     if (!env.isEmpty())
         key = QString::fromUtf8(env).trimmed();
-    else if (kGeminiApiKeyEmbedded && kGeminiApiKeyEmbedded[0] != '\0')
-        key = QString::fromUtf8(kGeminiApiKeyEmbedded).trimmed();
+    else if (!kGeminiApiKeyEmbedded.isEmpty() && kGeminiApiKeyEmbedded[0] != '\0')
+        key = kGeminiApiKeyEmbedded;
     else
         return QString();
     // Faute fréquente : « l » minuscule au lieu de « I » majuscule dans « AIza »
@@ -220,7 +220,7 @@ void GeminiClient::analyzeMachine(const QVariantMap &machineData)
 
     qDebug() << "[GEMINI] analyzeMachine called with machine data";
 
-    QUrl url(QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/%1:generateContent").arg(QLatin1String(kGeminiModel)));
+    QUrl url(QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/%1:generateContent").arg(kGeminiModel));
 
     QJsonObject userPart;
     userPart.insert("text", buildPrompt(machineData));
