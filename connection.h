@@ -13,7 +13,6 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QDebug>
-#include "dotenv.h"
 class Connection
 {
 public:

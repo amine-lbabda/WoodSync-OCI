@@ -9,6 +9,7 @@
  * 
  */
 #include "connection.h"
+#include "dotenv.h"
 using namespace std;
 /**
  * @brief Creating the instance of a singleton
