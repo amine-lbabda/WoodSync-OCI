@@ -19,7 +19,8 @@ public:
     void analyzeMachine(const QVariantMap &machineData);
     void cancel();
 
-    static QString apiKeyFromEnvironment();
+    static QString ollamaBaseUrlFromEnvironment();
+    static QString ollamaModelFromEnvironment();
 
 signals:
     void analysisComplete(int scorePreventif, const QString &indiceRisque, const QString &commentaire);
@@ -30,7 +31,7 @@ private slots:
 
 private:
     QString buildPrompt(const QVariantMap &machineData) const;
-    bool parseGeminiResponse(const QByteArray &raw, int *outScore, QString *outRisk, QString *outComment,
+    bool parseOllamaResponse(const QByteArray &raw, int *outScore, QString *outRisk, QString *outComment,
                              QString *outError) const;
 
     QNetworkAccessManager m_nam;

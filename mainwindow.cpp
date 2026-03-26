@@ -2430,7 +2430,7 @@ void MainWindow::startAiAnalysisForMaterialId(int materialId)
     ui->modif_ai->setEnabled(false);
     setAiTableButtonsEnabled(false);
     if (m_aiStatusLabel)
-        m_aiStatusLabel->setText(tr("Analyse en cours avec Gemini…"));
+        m_aiStatusLabel->setText(tr("Analyse en cours avec Ollama…"));
     clearAiResultsPanel();
     if (m_aiCommentLabel)
         m_aiCommentLabel->setText(tr("Veuillez patienter."));

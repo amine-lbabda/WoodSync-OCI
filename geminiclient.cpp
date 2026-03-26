@@ -1,5 +1,4 @@
 #include "geminiclient.h"
-#include "dotenv.h"
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QJsonDocument>
@@ -7,27 +6,23 @@
 #include <QJsonArray>
 #include <QUrl>
 #include <QRegularExpression>
+#include <QDebug>
 
-// Clé API : variable d'environnement GEMINI_API_KEY (recommandé) ou remplir ci-dessous (ne pas commiter une vraie clé)
-static const QString kGeminiApiKeyEmbedded = QString::fromUtf8(dotenv::getenv("GEMINI_API_KEY"));
+static const char kOllamaBaseUrlDefault[] = "http://localhost:11434";
+static const char kOllamaModelDefault[] = "llama3.1:8b";
 
-// Alias « latest » (souvent meilleur quota / dispo que les ids versionnés sur le plan gratuit). Voir https://ai.google.dev/api/rest/v1beta/models
-static const QString kGeminiModel = "gemini-flash-latest";
-
-QString GeminiClient::apiKeyFromEnvironment()
+QString GeminiClient::ollamaBaseUrlFromEnvironment()
 {
-    QString key;
-    const QByteArray env = qgetenv("GEMINI_API_KEY");
-    if (!env.isEmpty())
-        key = QString::fromUtf8(env).trimmed();
-    else if (!kGeminiApiKeyEmbedded.isEmpty() && kGeminiApiKeyEmbedded[0] != '\0')
-        key = kGeminiApiKeyEmbedded;
-    else
-        return QString();
-    // Faute fréquente : « l » minuscule au lieu de « I » majuscule dans « AIza »
-    if (key.startsWith(QStringLiteral("Alza")))
-        key = QStringLiteral("AIza") + key.mid(4);
-    return key;
+    const QByteArray env = qgetenv("OLLAMA_URL");
+    const QString configured = QString::fromUtf8(env).trimmed();
+    return configured.isEmpty() ? QString::fromLatin1(kOllamaBaseUrlDefault) : configured;
+}
+
+QString GeminiClient::ollamaModelFromEnvironment()
+{
+    const QByteArray env = qgetenv("OLLAMA_MODEL");
+    const QString configured = QString::fromUtf8(env).trimmed();
+    return configured.isEmpty() ? QString::fromLatin1(kOllamaModelDefault) : configured;
 }
 
 GeminiClient::GeminiClient(QObject *parent)
@@ -71,10 +66,14 @@ QString GeminiClient::buildPrompt(const QVariantMap &d) const
     ).arg(json);
 }
 
-static QString extractGoogleApiErrorMessage(const QJsonObject &root)
+static QString extractOllamaApiErrorMessage(const QJsonObject &root)
 {
-    const QJsonObject err = root.value(QStringLiteral("error")).toObject();
-    return err.value(QStringLiteral("message")).toString();
+    const QJsonValue err = root.value(QStringLiteral("error"));
+    if (err.isString())
+        return err.toString();
+    if (err.isObject())
+        return err.toObject().value(QStringLiteral("message")).toString();
+    return QString();
 }
 
 // Dernier bloc {...} (utile si le modèle ajoute du texte avant/après sans mode structuré)
@@ -97,37 +96,7 @@ static QString extractOutermostJsonObject(const QString &text)
     return QString();
 }
 
-static QJsonObject machineAnalysisResponseJsonSchema()
-{
-    QJsonObject scoreProp;
-    scoreProp.insert(QStringLiteral("type"), QStringLiteral("integer"));
-    scoreProp.insert(QStringLiteral("description"), QStringLiteral("Score préventif de 0 à 100 (100 = optimal)."));
-
-    QJsonObject riskProp;
-    riskProp.insert(QStringLiteral("type"), QStringLiteral("string"));
-    riskProp.insert(QStringLiteral("description"),
-                     QStringLiteral("Une des valeurs : Faible, Moyen, Élevé, Critique."));
-
-    QJsonObject commentProp;
-    commentProp.insert(QStringLiteral("type"), QStringLiteral("string"));
-    commentProp.insert(QStringLiteral("description"),
-                       QStringLiteral("Commentaire professionnel en français, maximum 2 phrases courtes."));
-
-    QJsonObject properties;
-    properties.insert(QStringLiteral("score_preventif"), scoreProp);
-    properties.insert(QStringLiteral("indice_risque"), riskProp);
-    properties.insert(QStringLiteral("commentaire"), commentProp);
-
-    QJsonObject schema;
-    schema.insert(QStringLiteral("type"), QStringLiteral("object"));
-    schema.insert(QStringLiteral("properties"), properties);
-    schema.insert(QStringLiteral("required"),
-                  QJsonArray{QStringLiteral("score_preventif"), QStringLiteral("indice_risque"),
-                             QStringLiteral("commentaire")});
-    return schema;
-}
-
-bool GeminiClient::parseGeminiResponse(const QByteArray &raw, int *outScore, QString *outRisk, QString *outComment, QString *outError) const
+bool GeminiClient::parseOllamaResponse(const QByteArray &raw, int *outScore, QString *outRisk, QString *outComment, QString *outError) const
 {
     QJsonParseError pe;
     QJsonDocument doc = QJsonDocument::fromJson(raw, &pe);
@@ -138,25 +107,19 @@ bool GeminiClient::parseGeminiResponse(const QByteArray &raw, int *outScore, QSt
     QJsonObject root = doc.object();
     if (root.contains(QStringLiteral("error"))) {
         if (outError) {
-            *outError = extractGoogleApiErrorMessage(root);
+            *outError = extractOllamaApiErrorMessage(root);
             if (outError->isEmpty())
-                *outError = tr("Erreur renvoyée par l'API Google.");
+                *outError = tr("Erreur renvoyée par le serveur Ollama.");
         }
         return false;
     }
-    QJsonArray candidates = root.value("candidates").toArray();
-    if (candidates.isEmpty()) {
-        if (outError) *outError = tr("Aucune réponse du modèle (candidates vides).");
-        return false;
-    }
-    QJsonObject cand0 = candidates.at(0).toObject();
-    QJsonObject content = cand0.value("content").toObject();
-    QJsonArray parts = content.value("parts").toArray();
-    if (parts.isEmpty()) {
+
+    QString text = root.value(QStringLiteral("response")).toString().trimmed();
+    if (text.isEmpty()) {
         if (outError) *outError = tr("Réponse du modèle vide.");
         return false;
     }
-    QString text = parts.at(0).toObject().value("text").toString().trimmed();
+
     text.remove(QRegularExpression("^```json\\s*"));
     text.remove(QRegularExpression("^```\\s*"));
     text.remove(QRegularExpression("\\s*```$"));
@@ -207,42 +170,38 @@ void GeminiClient::analyzeMachine(const QVariantMap &machineData)
 {
     cancel();
 
-    const QString apiKey = apiKeyFromEnvironment();
-    if (apiKey.isEmpty()) {
-        emit analysisFailed(tr("Clé API Gemini absente. Définissez la variable d'environnement GEMINI_API_KEY "
-                               "ou renseignez kGeminiApiKeyEmbedded dans geminiclient.cpp."));
+    const QString baseUrl = ollamaBaseUrlFromEnvironment();
+    const QString model = ollamaModelFromEnvironment();
+    if (baseUrl.isEmpty()) {
+        emit analysisFailed(tr("Configuration Ollama absente. Définissez OLLAMA_URL."));
         return;
     }
-    if (!apiKey.startsWith(QStringLiteral("AIza"))) {
-        emit analysisFailed(tr("La clé API semble incorrecte : les clés Google commencent généralement par « AIza » (vérifiez qu'il n'y a pas de faute de frappe, ex. « Alza »)."));
+    if (model.isEmpty()) {
+        emit analysisFailed(tr("Configuration Ollama absente. Définissez OLLAMA_MODEL."));
         return;
     }
 
-    qDebug() << "[GEMINI] analyzeMachine called with machine data";
+    qDebug() << "[OLLAMA] analyzeMachine called with machine data";
 
-    QUrl url(QStringLiteral("https://generativelanguage.googleapis.com/v1beta/models/%1:generateContent").arg(kGeminiModel));
-
-    QJsonObject userPart;
-    userPart.insert("text", buildPrompt(machineData));
-
-    QJsonObject userMsg;
-    userMsg.insert("role", QStringLiteral("user"));
-    userMsg.insert("parts", QJsonArray{userPart});
+    QString normalizedBase = baseUrl;
+    if (normalizedBase.endsWith(QLatin1Char('/')))
+        normalizedBase.chop(1);
+    QUrl url(QStringLiteral("%1/api/generate").arg(normalizedBase));
 
     QJsonObject body;
-    body.insert("contents", QJsonArray{userMsg});
-    QJsonObject genCfg;
-    genCfg.insert(QStringLiteral("temperature"), 0.25);
-    genCfg.insert(QStringLiteral("maxOutputTokens"), 1024);
-    genCfg.insert(QStringLiteral("responseMimeType"), QStringLiteral("application/json"));
-    genCfg.insert(QStringLiteral("responseJsonSchema"), machineAnalysisResponseJsonSchema());
-    body.insert(QStringLiteral("generationConfig"), genCfg);
+    body.insert(QStringLiteral("model"), model);
+    body.insert(QStringLiteral("prompt"), buildPrompt(machineData));
+    body.insert(QStringLiteral("stream"), false);
+    body.insert(QStringLiteral("format"), QStringLiteral("json"));
+
+    QJsonObject options;
+    options.insert(QStringLiteral("temperature"), 0.25);
+    body.insert(QStringLiteral("options"), options);
 
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
-    req.setRawHeader(QByteArrayLiteral("X-goog-api-key"), apiKey.toUtf8());
 
-    qDebug() << "[GEMINI] Sending request to Gemini API...";
+    qDebug() << "[OLLAMA] Sending request to:" << url;
     m_reply = m_nam.post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
     connect(m_reply, &QNetworkReply::finished, this, &GeminiClient::onReplyFinished);
 }
@@ -259,23 +218,23 @@ void GeminiClient::onReplyFinished()
     const int httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const QNetworkReply::NetworkError netErr = reply->error();
 
-    qDebug() << "[GEMINI] onReplyFinished called - httpStatus:" << httpStatus << "netErr:" << netErr << "raw length:" << raw.length();
+    qDebug() << "[OLLAMA] onReplyFinished called - httpStatus:" << httpStatus << "netErr:" << netErr << "raw length:" << raw.length();
 
     int score = 0;
     QString risk, comment, err;
 
     // Toujours tenter d'analyser le corps si présent (ignore une erreur Qt fantôme quand HTTP = OK)
     if (!raw.isEmpty()) {
-        if (parseGeminiResponse(raw, &score, &risk, &comment, &err)) {
-            qDebug() << "[GEMINI] Successfully parsed response - score:" << score << "risk:" << risk << "comment:" << comment;
-            qDebug() << "[GEMINI] Emitting analysisComplete signal";
+        if (parseOllamaResponse(raw, &score, &risk, &comment, &err)) {
+            qDebug() << "[OLLAMA] Successfully parsed response - score:" << score << "risk:" << risk << "comment:" << comment;
+            qDebug() << "[OLLAMA] Emitting analysisComplete signal";
             emit analysisComplete(score, risk, comment);
             return;
         }
     }
 
     if (!err.isEmpty()) {
-        qDebug() << "[GEMINI] Parse error:" << err;
+        qDebug() << "[OLLAMA] Parse error:" << err;
         if (netErr != QNetworkReply::NoError)
             emit analysisFailed(tr("%1\n(%2)").arg(err, reply->errorString()));
         else
@@ -284,7 +243,7 @@ void GeminiClient::onReplyFinished()
     }
 
     if (httpStatus > 0 && httpStatus != 200) {
-        qDebug() << "[GEMINI] HTTP error:" << httpStatus;
+        qDebug() << "[OLLAMA] HTTP error:" << httpStatus;
         emit analysisFailed(tr("Erreur HTTP %1").arg(httpStatus));
         return;
     }
