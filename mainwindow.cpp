@@ -13,6 +13,8 @@
 #include "geminiclient.h"
 #include "emaildialog.h"
 #include "employes.h"
+#include <QDir>
+#include <QFileInfo>
 // EmailDialog implementation moved to emaildialog.h/emaildialog.cpp
 
 // stackedwidget order in mainwindow.ui:
@@ -211,6 +213,23 @@ static QString riskPanneDbValueToLabel(const QVariant &v)
     }
 }
 
+static QString resolveFaceModelPathForWindows(const QString &fileName)
+{
+    const QString appDir = QCoreApplication::applicationDirPath();
+    const QStringList candidates = {
+        QDir::cleanPath(appDir + "/" + fileName),
+        QDir::cleanPath(appDir + "/../" + fileName),
+        QDir::cleanPath(appDir + "/../../" + fileName),
+        QDir::cleanPath(appDir + "/../../../" + fileName),
+        QDir::cleanPath(QDir::currentPath() + "/" + fileName)
+    };
+    for (const QString &path : candidates) {
+        if (QFileInfo::exists(path))
+            return path;
+    }
+    return candidates.first();
+}
+
 #include "employes.h"
 /**
  * @brief Construct a new Main Window:: Main Window object
@@ -225,11 +244,22 @@ MainWindow::MainWindow(QWidget *parent)
 {
     qDebug() << "[CONSTRUCTOR] MainWindow constructor started";
     loadFaceRegistry();
+
+#ifdef Q_OS_WIN
+    detPath = resolveFaceModelPathForWindows("face_detection_yunet_2023mar.onnx");
+    recPath = resolveFaceModelPathForWindows("face_recognition_sface_2021dec.onnx");
+#else
+    detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
+    recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
+#endif
+
     ignore = run([this](){
         detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, DNN_BACKEND_CUDA, DNN_TARGET_CUDA);
         recognizer = FaceRecognizerSF::create(recPath.toStdString(), "", DNN_BACKEND_CUDA, DNN_TARGET_CUDA);
     });
+
     ui->setupUi(this);
+
     ui->stackedwidget->setCurrentIndex(0);
     ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -1431,6 +1461,11 @@ void MainWindow::on_BtnLogin_clicked()
 
 void MainWindow::on_BtnLoginFace_clicked()
 {
+    if (detector.empty() || recognizer.empty()) {
+        QMessageBox::critical(this, tr("Face Recognition"), tr("Les modèles de reconnaissance faciale ne sont pas chargés."));
+        return;
+    }
+
     ignore = run([this](){
         cap.open(0);
         if (!cap.isOpened()) return;
@@ -1694,6 +1729,10 @@ void MainWindow::on_InscriptionEmploye_clicked()
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(nullptr,tr("Reconaissance faciale"),tr("Voulez-vous configurer votre reconnaissance faciale?"),QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
+            if (detector.empty() || recognizer.empty()) {
+                QMessageBox::critical(this, tr("Face Recognition"), tr("Les modèles de reconnaissance faciale ne sont pas chargés."));
+                return;
+            }
             cap.open(0);
             if (!cap.isOpened()) {
                 qDebug() << "Could not open camera!";

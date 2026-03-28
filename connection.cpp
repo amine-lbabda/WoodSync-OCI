@@ -29,15 +29,19 @@ Connection &Connection::createInstance()
  */
 bool Connection::createConnection()
 {
-    dotenv::init("/home/amine/Desktop/WoodSync-OCI/.env");
-    QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
+    //dotenv::init("/home/amine/Desktop/WoodSync-OCI/.env");
+    /*QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
+    qDebug() << name;
     QString username = QString::fromUtf8(dotenv::getenv("DATABASE_USERNAME"));
+    qDebug() << username;
     QString hostname = QString::fromUtf8(dotenv::getenv("DATABSE_HOST"));
+    qDebug() << hostname;
     QString password = QString::fromUtf8(dotenv::getenv("DATABASE_PASSWORD"));
-    db.setDatabaseName(name); //remplacer avec votre nom du projet
-    db.setUserName(username); //remplacer avec votre nom d'utilisateur
-    db.setHostName(hostname); //remplacer avec localhost ou 127.0.0.1
-    db.setPassword(password); //remplacer avec votre mdp
+    qDebug() << password;*/
+    db.setDatabaseName("Projet_2A"); //remplacer avec votre nom du projet
+    db.setUserName("amine"); //remplacer avec votre nom d'utilisateur
+    //db.setHostName(hostname); //remplacer avec localhost ou 127.0.0.1
+    db.setPassword("admin"); //remplacer avec votre mdp
     if (db.open()){
         qDebug() << "Connection established !";
         return true;
@@ -51,7 +55,7 @@ bool Connection::createConnection()
  * 
  */
 Connection::Connection() {
-    db = QSqlDatabase::addDatabase("QOCI");
+    db = QSqlDatabase::addDatabase("QODBC");
 }
 /**
  * @brief Destroy the Connection:: Connection object
