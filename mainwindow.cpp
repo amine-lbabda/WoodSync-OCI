@@ -213,7 +213,7 @@ static QString riskPanneDbValueToLabel(const QVariant &v)
     }
 }
 
-static QString resolveFaceModelPathForWindows(const QString &fileName)
+static QString resolveFaceModelPath(const QString &fileName)
 {
     const QString appDir = QCoreApplication::applicationDirPath();
     const QStringList candidates = {
@@ -245,13 +245,9 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "[CONSTRUCTOR] MainWindow constructor started";
     loadFaceRegistry();
 
-#ifdef Q_OS_WIN
-    detPath = resolveFaceModelPathForWindows("face_detection_yunet_2023mar.onnx");
-    recPath = resolveFaceModelPathForWindows("face_recognition_sface_2021dec.onnx");
-#else
-    detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
-    recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
-#endif
+
+    detPath = resolveFaceModelPath("face_detection_yunet_2023mar.onnx");
+    recPath = resolveFaceModelPath("face_recognition_sface_2021dec.onnx");
 
     ignore = run([this](){
         detector = FaceDetectorYN::create(detPath.toStdString(), "", Size(640,480), 0.9f, 0.3f, 5000, DNN_BACKEND_CUDA, DNN_TARGET_CUDA);

@@ -8,8 +8,12 @@
  * @copyright Copyright (c) 2026
  * 
  */
+// ...existing code...
 #include "connection.h"
 #include "dotenv.h"
+#include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
 using namespace std;
 /**
  * @brief Creating the instance of a singleton
@@ -27,16 +31,27 @@ Connection &Connection::createInstance()
  * @return true 
  * @return false 
  */
+static QString resolveEnvPath(const QString &fileName)
+{
+    const QString appDir = QCoreApplication::applicationDirPath();
+    const QStringList candidates = {
+        QDir::cleanPath(appDir + "/" + fileName),
+        QDir::cleanPath(appDir + "/../" + fileName),
+        QDir::cleanPath(appDir + "/../../" + fileName),
+        QDir::cleanPath(appDir + "/../../../" + fileName),
+        QDir::cleanPath(QDir::currentPath() + "/" + fileName)
+    };
+    for (const QString &path : candidates) {
+        if (QFileInfo::exists(path))
+            return path;
+    }
+    return candidates.first();
+}
+
 bool Connection::createConnection()
 {
-    // Guardrails for loading environment variables based on OS
-    #if defined(Q_OS_WIN)
-        dotenv::init("C:\\Users\\faycel\\Desktop\\personal_projects\\WoodSync-OCI\\.env");
-    #elif defined(Q_OS_LINUX)
-        dotenv::init("/home/amine/Desktop/WoodSync-OCI/.env");
-    #else
-        #error "Unsupported OS for dotenv initialization. Please add the correct path."
-    #endif
+    // Unified .env loading using relative path
+    dotenv::init(resolveEnvPath(".env").toStdString().c_str());
     QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
     qDebug() << name;
     QString username = QString::fromUtf8(dotenv::getenv("DATABASE_USERNAME"));

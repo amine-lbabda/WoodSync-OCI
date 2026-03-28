@@ -212,8 +212,8 @@ private:
     Ptr<FaceDetectorYN> detector;
     Ptr<FaceRecognizerSF> recognizer;
     vector<FaceTemplate> registry;
-    QString detPath = "/home/amine/Desktop/WoodSync-OCI/face_detection_yunet_2023mar.onnx";
-    QString recPath = "/home/amine/Desktop/WoodSync-OCI/face_recognition_sface_2021dec.onnx";
+    QString detPath;
+    QString recPath;
     const string WINNAME="Enregistrement biométrique WoodSync";
     int currentId = -1;
 
