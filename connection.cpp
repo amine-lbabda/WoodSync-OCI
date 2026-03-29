@@ -52,7 +52,12 @@ bool Connection::createConnection()
 {
     // Unified .env loading using relative path
     dotenv::init(resolveEnvPath(".env").toStdString().c_str());
-    QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
+#if defined(Q_OS_WINDOWS)
+QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
+#else
+    QString name = "XE";
+#endif
+
     qDebug() << name;
     QString username = QString::fromUtf8(dotenv::getenv("DATABASE_USERNAME"));
     qDebug() << username;
@@ -77,7 +82,11 @@ bool Connection::createConnection()
  * 
  */
 Connection::Connection() {
+#if defined(Q_OS_WINDOWS)
     db = QSqlDatabase::addDatabase("QODBC");
+#else
+    db = QSqlDatabase::addDatabase("QOCI");
+#endif
 }
 /**
  * @brief Destroy the Connection:: Connection object
