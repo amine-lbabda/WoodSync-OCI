@@ -56,18 +56,18 @@ bool Connection::createConnection()
 QString name = QString::fromUtf8(dotenv::getenv("DATABASE_NAME"));
 #else
     QString name = "XE";
+    QString hostname = QString::fromUtf8(dotenv::getenv("DATABSE_HOST"));
+    db.setHostName(hostname);
 #endif
 
     qDebug() << name;
     QString username = QString::fromUtf8(dotenv::getenv("DATABASE_USERNAME"));
     qDebug() << username;
-    QString hostname = QString::fromUtf8(dotenv::getenv("DATABSE_HOST"));
-    qDebug() << hostname;
     QString password = QString::fromUtf8(dotenv::getenv("DATABASE_PASSWORD"));
     qDebug() << password;
     db.setDatabaseName(name); //remplacer avec votre nom du projet
     db.setUserName(username); //remplacer avec votre nom d'utilisateur
-    //db.setHostName(hostname); //remplacer avec localhost ou 127.0.0.1
+     //remplacer avec localhost ou 127.0.0.1
     db.setPassword(password); //remplacer avec votre mdp
     if (db.open()){
         qDebug() << "Connection established !";
